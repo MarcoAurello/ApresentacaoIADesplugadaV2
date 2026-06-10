@@ -325,6 +325,26 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 }
 .s-end .vid-btn:hover { background:#E09010; }
 
+/* ═══ SLIDE 12 — VÍDEO ═══ */
+.s-video { background: #0f0f0f !important; }
+.s-video .s-title { color: white; border-color: #333; }
+.s-video .s-intro { color: #aaa; }
+.video-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 12px;
+}
+.video-wrap iframe {
+  width: 100%;
+  height: 100%;
+  max-height: calc(100% - 4px);
+  border-radius: 10px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+}
+
 /* ═══ ANIM ═══ */
 .slide.active .anim { animation:fup .42s ease both; }
 .slide.active .anim:nth-child(1){animation-delay:.07s}
@@ -362,8 +382,24 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
   .grid-4,.flow-steps { grid-template-columns: repeat(2,1fr); }
   .gestao-grid,.api-grid { grid-template-columns: 1fr; }
   .sec-cards { grid-template-columns: 1fr; }
-  .arrow-btn { width:28px; height:28px; font-size:.8rem; }
-  #btn-prev { left:36px; }
+
+  /* scroll hint: esconde ícone, exibe só o texto */
+  #scroll-hint .sh-chevron { display: none; }
+  #scroll-hint .sh-label {
+    font-size: .72rem;
+    font-weight: 700;
+    color: rgba(123,26,26,.55);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,.75);
+    padding: 3px 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* nav items: esconde número, mostra só título */
+  .nav-item .n-num { display: none; }
+  .nav-item .n-title { font-size: .75rem; }
 }
 
 @media (max-width: 400px) {
@@ -406,7 +442,6 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
       <div class="c1"></div><div class="c2"></div>
       <div class="content">
         <div class="brand anim">Hemobrás <span>Gerência de Tecnologia da Informação e Comunicação — GTIC</span></div>
-        <div class="brand anim">Marco Aurellio <span>Analista de Sistemas — GTIC</span></div>
         <div class="div anim"></div>
         <div class="badge anim">Versão 2.0</div>
         <h1 class="anim">Meu Senior<br>Favorito</h1>
@@ -651,15 +686,33 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
         <h2>Meu Senior Favorito</h2>
         <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
       </div>
-      <a class="vid-btn anim" href="https://youtu.be/CFrANheqjTc" target="_blank">▶ Clique para ver o vídeo do sistema</a>
       <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc11"></span></div>
+    </div>
+
+    <!-- ══ 12 — VÍDEO ══ -->
+    <div class="slide s-video" data-index="11">
+      <div class="slide-body">
+        <div class="s-title anim">▶ Demonstração em Vídeo</div>
+        <p class="s-intro anim">Assista à demonstração completa do sistema Meu Senior Favorito em funcionamento.</p>
+        <div class="video-wrap anim">
+          <iframe
+            id="yt-frame"
+            src="https://www.youtube.com/embed/CFrANheqjTc?rel=0&modestbranding=1"
+            title="Meu Senior Favorito — Demonstração"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc12"></span></div>
     </div>
 
   </div>
 </div>
 
 <script>
-const SLIDES=[{title:"Capa"},{title:"O Problema"},{title:"A Evolução"},{title:"Hierarquia do Banco"},{title:"Gestão do Conhecimento"},{title:"Fluxo da IA"},{title:"Segurança de Dados"},{title:"Rotas da API"},{title:"Benefícios"},{title:"Próximos Passos"},{title:"Encerramento"}];
+const SLIDES=[{title:"Capa"},{title:"O Problema"},{title:"A Evolução"},{title:"Hierarquia do Banco"},{title:"Gestão do Conhecimento"},{title:"Fluxo da IA"},{title:"Segurança de Dados"},{title:"Rotas da API"},{title:"Benefícios"},{title:"Próximos Passos"},{title:"Encerramento"},{title:"▶ Vídeo Demo"}];
 const slides=document.querySelectorAll('.slide'), total=slides.length;
 let current=0, busy=false;
 
