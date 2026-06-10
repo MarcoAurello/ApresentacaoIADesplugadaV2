@@ -87,17 +87,17 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 #progress-bar { height:100%; background:var(--gold2); transition:width .4s ease; }
 #slides { flex:1; position:relative; overflow:hidden; min-height:0; }
 
-/* ═══ SLIDES ═══ */
+/* ═══ SLIDES — transição vertical ═══ */
 .slide {
   position:absolute; inset:0;
-  opacity:0; transform:translateX(40px);
-  transition:opacity .38s ease,transform .38s ease;
+  opacity:0; transform:translateY(60px) scale(.98);
+  transition:opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
   pointer-events:none;
   display:flex; flex-direction:column;
   background:white;
 }
-.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
-.slide.exit   { opacity:0; transform:translateX(-40px); }
+.slide.active { opacity:1; transform:translateY(0) scale(1); pointer-events:all; }
+.slide.exit   { opacity:0; transform:translateY(-80px) scale(.97); }
 
 /* ═══ FOOTER ═══ */
 .footer {
@@ -107,18 +107,48 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
   font-size: clamp(.55rem,.9vw,.68rem);
 }
 
-/* ═══ ARROWS ═══ */
-.arrow-btn {
-  position:absolute; top:50%; transform:translateY(-50%);
-  width:32px; height:32px; border-radius:50%; border:none;
-  background:rgba(123,26,26,.12); color:var(--red);
-  font-size:.95rem; cursor:pointer; z-index:50;
-  transition:background .2s,transform .2s;
-  display:flex; align-items:center; justify-content:center;
+/* ═══ SCROLL HINT ═══ */
+#scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  pointer-events: none;
+  transition: opacity .4s;
 }
-.arrow-btn:hover { background:rgba(123,26,26,.25); transform:translateY(-50%) scale(1.1); }
-#btn-prev { left:6px; }
-#btn-next { right:6px; }
+#scroll-hint.hidden { opacity: 0; }
+#scroll-hint .sh-label {
+  font-size: .6rem;
+  font-weight: 600;
+  color: rgba(123,26,26,.45);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+#scroll-hint .sh-chevron {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: bounceDown 1.6s ease-in-out infinite;
+}
+#scroll-hint .sh-chevron span {
+  display: block;
+  width: 10px; height: 2px;
+  background: rgba(123,26,26,.35);
+  border-radius: 2px;
+}
+#scroll-hint .sh-chevron span:nth-child(1) { transform: rotate(40deg) translateX(2px); }
+#scroll-hint .sh-chevron span:nth-child(2) { transform: rotate(-40deg) translateX(-2px); }
+#scroll-hint .sh-row { display:flex; gap:2px; }
+
+@keyframes bounceDown {
+  0%,100% { transform:translateY(0); opacity:.5; }
+  50%      { transform:translateY(7px); opacity:1; }
+}
 
 /* ═══ SLIDE BODY ═══ */
 .slide-body {
@@ -362,8 +392,14 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 <div id="main">
   <div id="progress"><div id="progress-bar"></div></div>
   <div id="slides">
-    <button class="arrow-btn" id="btn-prev">&#8592;</button>
-    <button class="arrow-btn" id="btn-next">&#8594;</button>
+    <!-- indicador de scroll -->
+    <div id="scroll-hint">
+      <div class="sh-label">deslize para cima</div>
+      <div class="sh-chevron">
+        <div class="sh-row"><span></span><span></span></div>
+        <div class="sh-row" style="opacity:.5"><span></span><span></span></div>
+      </div>
+    </div>
 
     <!-- ══ 1 — CAPA ══ -->
     <div class="slide s1 active" data-index="0">
@@ -638,11 +674,13 @@ SLIDES.forEach((s,i)=>{
 
 for(let i=1;i<=total;i++){const el=document.getElementById('fc'+i);if(el)el.textContent=`${i} / ${total}`;}
 
+const hint = document.getElementById('scroll-hint');
+
 function updateUI(){
   document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';
   document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',i===current));
-  document.getElementById('btn-prev').style.opacity=current===0?'0.2':'1';
-  document.getElementById('btn-next').style.opacity=current===total-1?'0.2':'1';
+  // esconde hint no último slide
+  hint.classList.toggle('hidden', current === total - 1);
   const active=navList.querySelector('.nav-item.active');
   if(active)active.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
@@ -651,26 +689,45 @@ function goTo(idx){
   if(busy||idx===current||idx<0||idx>=total)return;
   busy=true;
   const prev=slides[current],next=slides[idx],dir=idx>current?1:-1;
+  // dir>0 = avança (cima): novo entra de baixo; dir<0 = volta: novo entra de cima
   prev.classList.remove('active'); prev.classList.add('exit');
-  next.style.transform=`translateX(${dir>0?40:-40}px)`; next.style.opacity='0';
+  next.style.transform=`translateY(${dir>0?'60px':'-60px'}) scale(.98)`;
+  next.style.opacity='0';
   next.classList.add('active');
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    next.style.transform='translateX(0)'; next.style.opacity='1';
-    setTimeout(()=>{prev.classList.remove('exit');prev.style.cssText='';busy=false;},400);
+    next.style.transform='translateY(0) scale(1)';
+    next.style.opacity='1';
+    setTimeout(()=>{prev.classList.remove('exit');prev.style.cssText='';busy=false;},500);
   }));
   current=idx; updateUI();
 }
 
-document.getElementById('btn-next').onclick=()=>goTo(current+1);
-document.getElementById('btn-prev').onclick=()=>goTo(current-1);
+// Teclado: seta baixo/espaço = próximo; seta cima = anterior
 document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goTo(current+1);}
+  if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();goTo(current+1);}
+  if(e.key==='ArrowUp'){e.preventDefault();goTo(current-1);}
+  if(e.key==='ArrowRight'){e.preventDefault();goTo(current+1);}
   if(e.key==='ArrowLeft'){e.preventDefault();goTo(current-1);}
   if(e.key==='Home')goTo(0); if(e.key==='End')goTo(total-1);
 });
-let tx=0;
-document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)goTo(current+(dx<0?1:-1));});
+
+// Scroll com mouse wheel
+let wheelCooldown=false;
+document.getElementById('slides').addEventListener('wheel',e=>{
+  e.preventDefault();
+  if(wheelCooldown)return;
+  wheelCooldown=true;
+  goTo(current+(e.deltaY>0?1:-1));
+  setTimeout(()=>wheelCooldown=false,600);
+},{passive:false});
+
+// Touch vertical: deslizar para cima = próximo
+let ty=0, tStartY=0;
+document.addEventListener('touchstart',e=>{ty=e.touches[0].clientY; tStartY=ty;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dy=tStartY-e.changedTouches[0].clientY; // positivo = deslizou pra cima
+  if(Math.abs(dy)>50)goTo(current+(dy>0?1:-1));
+});
 
 function toggleSidebar(force){
   const sb=document.getElementById('sidebar');
