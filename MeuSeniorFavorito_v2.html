@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Meu Senior Favorito 2.0 — Hemobrás</title>
+<style>
+:root {
+  --red:    #7B1A1A;
+  --red2:   #A52020;
+  --red3:   #C03030;
+  --redlt:  #FFF5F5;
+  --gold:   #C87E1A;
+  --gold2:  #F5A623;
+  --white:  #FFFFFF;
+  --gray:   #F4F4F4;
+  --gline:  #DDDDDD;
+  --dark:   #1A1A1A;
+  --med:    #555555;
+  --muted:  #888888;
+  --green:  #1A6B3A;
+  --navy:   #1A1A2E;
+  --navy2:  #16213E;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:#111; display:flex; height:100vh; overflow:hidden; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: #1a0a0a;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 10;
+  border-right: 1px solid #3a1a1a;
+}
+#sidebar .brand {
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid #3a1a1a;
+}
+#sidebar .brand .b-name { font-size:.95rem;font-weight:800;color:white;letter-spacing:.04em; }
+#sidebar .brand .b-sub  { font-size:.65rem;color:#b08080;margin-top:2px; }
+#sidebar .nav-list { flex:1; padding:8px 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all .2s;
+}
+.nav-item:hover { background: rgba(123,26,26,.3); border-left-color: var(--red2); }
+.nav-item.active { background: rgba(123,26,26,.5); border-left-color: var(--gold2); }
+.nav-item .n-num {
+  width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.08);
+  color:#b08080;font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nav-item.active .n-num { background:var(--red);color:white; }
+.nav-item .n-title { font-size:.72rem;color:#c09090;line-height:1.3; }
+.nav-item.active .n-title { color:white;font-weight:600; }
+#sidebar .nav-footer {
+  padding: 10px 14px;
+  border-top: 1px solid #3a1a1a;
+  font-size:.62rem;color:#805050;text-align:center;
+}
+
+/* ── MAIN AREA ── */
+#main {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── PROGRESS ── */
+#progress {
+  height: 3px;
+  background: #222;
+  flex-shrink: 0;
+}
+#progress-bar {
+  height: 100%;
+  background: var(--gold2);
+  transition: width .4s ease;
+}
+
+/* ── SLIDES CONTAINER ── */
+#slides { flex:1; position:relative; overflow:hidden; }
+
+/* ── SLIDES ── */
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit    { opacity:0; transform:translateX(-40px); }
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--red);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 28px;
+  flex-shrink: 0;
+  font-size:.7rem;
+}
+
+/* ── ARROW BUTTONS ── */
+.arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(123,26,26,.8);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 50;
+  transition: background .2s, transform .2s;
+  display: flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover { background:var(--red2); transform:translateY(-50%) scale(1.1); }
+#btn-prev { left: 8px; }
+#btn-next { right: 8px; }
+
+/* ════════════════════════════
+   HELPERS
+════════════════════════════ */
+.slide-body { flex:1; padding:20px 48px 8px; overflow:hidden; }
+.s-title {
+  font-size:1.45rem;font-weight:800;color:var(--red);
+  margin-bottom:14px;padding-bottom:8px;
+  border-bottom:2px solid var(--gline);
+}
+.s-dark .s-title { color:white;border-color:#333355; }
+
+/* cards */
+.grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;height:calc(100% - 52px); }
+.grid-2 { display:grid;grid-template-columns:repeat(2,1fr);gap:16px;height:calc(100% - 52px); }
+.grid-6 { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;height:calc(100% - 52px); }
+.grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;height:calc(100% - 52px); }
+
+.card {
+  background:white;border:1px solid var(--gline);border-radius:7px;
+  padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+}
+.card.a-red::before  { content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--red); }
+.card.a-top::before  { content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--red); }
+.card.a-gold::before { content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--gold2); }
+.card .num {
+  width:26px;height:26px;border-radius:50%;background:var(--red);
+  color:white;font-size:.8rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;margin-bottom:8px;flex-shrink:0;
+}
+.card .ct { font-size:.92rem;font-weight:700;color:var(--red);margin-bottom:5px; }
+.card .cb { font-size:.8rem;color:var(--med);line-height:1.5;flex:1; }
+
+/* ════════
+   SLIDE 1
+════════ */
+.s1 { background:var(--red); }
+.s1 .c1,.s1 .c2 { position:absolute;border-radius:50%;background:rgba(165,32,32,.3); }
+.s1 .c1 { width:400px;height:400px;top:-80px;right:-80px; }
+.s1 .c2 { width:250px;height:250px;bottom:40px;right:160px; }
+.s1 .content { position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 48px; }
+.s1 .brand   { font-size:1.3rem;font-weight:800;color:white; }
+.s1 .brand span { font-weight:300;opacity:.6;font-size:.75rem;margin-left:.4rem; }
+.s1 .div     { width:50px;height:3px;background:rgba(255,255,255,.25);margin:10px 0; }
+.s1 .badge   { display:inline-block;background:var(--gold2);color:#3A1A00;font-size:.7rem;font-weight:700;padding:.18rem .6rem;border-radius:3px;margin-bottom:10px; }
+.s1 h1       { font-size:3.4rem;font-weight:800;color:white;line-height:1.1;margin-bottom:10px; }
+.s1 .sub     { font-size:1rem;color:rgba(255,220,220,.85);font-style:italic;margin-bottom:4px; }
+.s1 .tags    { font-size:.75rem;color:rgba(255,180,180,.55); }
+.s1 .star    { position:absolute;right:48px;bottom:50px;font-size:5rem;opacity:.12;color:white; }
+
+/* ════════
+   SLIDE 3 — EVOLUCAO
+════════ */
+.evo-grid { display:grid;grid-template-columns:1fr 44px 1fr;height:calc(100% - 52px); }
+.evo-col  { border-radius:7px;overflow:hidden;display:flex;flex-direction:column; }
+.evo-col.before { background:var(--gray);border:1px solid var(--gline); }
+.evo-col.after  { background:var(--redlt);border:1.5px solid var(--red); }
+.evo-hd   { padding:7px 14px;font-size:.8rem;font-weight:700;color:white; }
+.evo-hd.b { background:#888; }
+.evo-hd.a { background:var(--red); }
+.evo-list { padding:10px 14px;list-style:none;overflow-y:auto; }
+.evo-list li { padding:4px 0;font-size:.8rem;color:var(--med);display:flex;gap:6px;border-bottom:1px solid rgba(0,0,0,.04); }
+.evo-list li::before { content:'•';color:var(--red);font-weight:900;flex-shrink:0; }
+.evo-list li.hi { color:var(--dark);font-weight:600; }
+.evo-arrow { display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--red); }
+
+/* ════════
+   SLIDE 4 — HIERARQUIA
+════════ */
+.hier { display:flex;flex-direction:column;gap:5px;height:calc(100% - 52px); }
+.hbar { display:flex;align-items:center;border-radius:6px;padding:8px 14px; }
+.hbar .hl { font-weight:700;font-size:.95rem;min-width:90px;color:white; }
+.hbar .hd { font-size:.78rem;color:rgba(255,220,220,.85); }
+.hbar.gold .hl,.hbar.gold .hd { color:#3A1A00 !important; }
+.hbar.gold .hd { color:#7A4000 !important; }
+.hnote { margin-top:4px;padding:7px 12px;background:#FFF3E0;border:1px solid var(--gold2);border-radius:6px;font-size:.75rem;color:#5A3000;font-style:italic; }
+
+/* ════════
+   SLIDE 5 — GESTAO
+════════ */
+.gestao-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;height:calc(100% - 52px); }
+.gcol { display:flex;flex-direction:column;gap:7px; }
+.gcol-hd { background:var(--red);color:white;padding:5px 12px;border-radius:6px 6px 0 0;font-weight:700;font-size:.8rem;text-align:center; }
+.gitem { display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--gline); }
+.gnum  { width:18px;height:18px;border-radius:50%;background:var(--red);color:white;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
+.gitem strong { font-size:.82rem;color:var(--dark);display:block; }
+.gitem span   { font-size:.73rem;color:var(--muted);font-style:italic; }
+.sync-item { background:white;border:1px solid var(--gline);border-radius:5px;padding:6px 10px;border-left:4px solid var(--gold2); }
+.sync-item .se { font-size:.8rem;font-weight:700;color:var(--red); }
+.sync-item .sa { font-size:.73rem;color:var(--med); }
+.gnote { background:#F0FFF4;border:1px solid var(--green);border-radius:5px;padding:7px 10px;font-size:.75rem;color:#1A4A2A;margin-top:auto; }
+
+/* ════════
+   SLIDE 6 — FLUXO
+════════ */
+.flow-steps { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;height:calc(100% - 52px - 36px); }
+.fstep { background:white;border:1px solid var(--gline);border-radius:7px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;align-items:center; }
+.fstep:nth-child(odd)  { background:var(--redlt);border-color:var(--red); }
+.fstep .fn { width:32px;height:32px;border-radius:50%;background:var(--red);color:white;font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:8px; }
+.fstep .fi { font-size:1.8rem;margin-bottom:6px; }
+.fstep .ft { font-size:.88rem;font-weight:700;color:var(--red);margin-bottom:4px; }
+.fstep .fb { font-size:.75rem;color:var(--med);line-height:1.4; }
+.flow-bar  { background:var(--red);color:white;border-radius:5px;text-align:center;padding:5px;font-size:.73rem;margin-top:6px; }
+
+/* ════════
+   SLIDE 7 — SEGURANÇA
+════════ */
+.s-dark { background:var(--navy); }
+.sec-badge { background:var(--navy2);border:1px solid var(--blue-dim,#4444AA);border-radius:6px;padding:7px;text-align:center;font-size:.85rem;font-weight:700;color:var(--gold2);margin-bottom:12px; }
+.sec-flow  { display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px;flex-wrap:wrap; }
+.sbox { padding:7px 10px;border-radius:6px;font-size:.73rem;font-weight:700;text-align:center;min-width:100px; }
+.sarr { font-size:1.1rem;color:#888; }
+.sec-cards { display:grid;grid-template-columns:repeat(3,1fr);gap:10px; }
+.sec-card { background:var(--navy2);border-radius:6px;padding:12px;border-left:4px solid; }
+.sec-card .sct { font-size:.85rem;font-weight:700;color:white;margin-bottom:5px; }
+.sec-card .scb { font-size:.75rem;color:#BBBBDD;line-height:1.5; }
+
+/* ════════
+   SLIDE 8 — ROTAS
+════════ */
+.api-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;height:calc(100% - 52px); }
+.ablock-hd { background:var(--red);color:white;padding:5px 10px;border-radius:5px;font-size:.8rem;font-weight:700;margin-bottom:5px; }
+.route { display:flex;align-items:baseline;gap:6px;padding:3px 4px;border-radius:3px;font-size:.73rem;font-family:Consolas,monospace; }
+.route:hover { background:var(--gray); }
+.mth { font-size:.62rem;padding:.1rem .3rem;border-radius:3px;min-width:42px;text-align:center;font-weight:700;flex-shrink:0; }
+.m-get  { background:#E3F5E1;color:#1A6B3A; }
+.m-post { background:#E3F0FF;color:#1A3A8B; }
+.m-put  { background:#FFF3E0;color:#7B4A00; }
+.m-del  { background:#FFEBEE;color:#7B1A1A; }
+.m-crud { background:#F3E5F5;color:#4A1A6B; }
+.rpath { color:var(--dark);font-size:.73rem; }
+.rdesc { color:var(--muted);font-size:.65rem;font-family:'Segoe UI',Arial,sans-serif;margin-left:auto; }
+.cfg-hd { background:#1A3A6B;color:white;padding:4px 10px;border-radius:5px;font-size:.75rem;font-weight:700;margin:8px 0 4px; }
+.cfg-row { display:flex;gap:6px;padding:2px 4px;font-size:.73rem; }
+.cfg-key { color:var(--red);font-weight:700;min-width:90px; }
+.cfg-val { color:var(--med); }
+
+/* ════════
+   SLIDE 9 — BENEFÍCIOS
+════════ */
+.bicon { font-size:1.6rem;margin-bottom:5px; }
+
+/* ════════
+   SLIDE 10 — PROXIMOS PASSOS
+════════ */
+.steps { display:flex;flex-direction:column;gap:7px;height:calc(100% - 52px); }
+.step  { display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:7px;flex:1; }
+.step:nth-child(odd)  { background:var(--gray);border:1px solid var(--gline); }
+.step:nth-child(even) { background:white;border:1px solid var(--gline); }
+.snum { width:30px;height:30px;border-radius:50%;background:var(--red);color:white;font-size:.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.step strong { font-size:.95rem;font-weight:700;color:var(--red);display:block; }
+.step span   { font-size:.8rem;color:var(--med); }
+
+/* ════════
+   SLIDE 11
+════════ */
+.s-end { background:var(--red);justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden; }
+.s-end .ec1,.s-end .ec2 { position:absolute;border-radius:50%;background:rgba(165,32,32,.3); }
+.s-end .ec1 { width:380px;height:380px;top:-100px;right:-100px; }
+.s-end .ec2 { width:220px;height:220px;bottom:-40px;left:-40px; }
+.s-end .econtent { position:relative;z-index:1; }
+.s-end .estar { font-size:5rem;display:block;margin-bottom:10px;color:var(--gold2); }
+.s-end h2 { font-size:3rem;font-weight:800;color:white;margin-bottom:8px; }
+.s-end p  { font-size:1.05rem;color:rgba(255,220,220,.85);font-style:italic; }
+
+/* anim */
+.slide.active .anim { animation:fup .45s ease both; }
+.slide.active .anim:nth-child(1){animation-delay:.08s}
+.slide.active .anim:nth-child(2){animation-delay:.16s}
+.slide.active .anim:nth-child(3){animation-delay:.24s}
+.slide.active .anim:nth-child(4){animation-delay:.32s}
+.slide.active .anim:nth-child(5){animation-delay:.40s}
+@keyframes fup { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="brand">
+    <div class="b-name">Hemobrás</div>
+    <div class="b-sub">GTIC — IA Desplugada</div>
+  </div>
+  <div class="nav-list" id="nav-list"></div>
+  <div class="nav-footer">Marco Aurélio · 2026</div>
+</nav>
+
+<!-- ── MAIN ────────────────────────────────────────────────── -->
+<div id="main">
+  <div id="progress"><div id="progress-bar"></div></div>
+
+  <div id="slides">
+    <button class="arrow-btn" id="btn-prev">&#8592;</button>
+    <button class="arrow-btn" id="btn-next">&#8594;</button>
+
+    <!-- ══ SLIDE 1 — CAPA ══ -->
+    <div class="slide s1 active" data-index="0">
+      <div class="c1"></div><div class="c2"></div>
+      <div class="content">
+        <div class="brand anim">Hemobrás <span>Gerência de Tecnologia da Informação e Comunicação — GTIC</span></div>
+        <div class="div anim"></div>
+        <div class="badge anim">Versão 2.0</div>
+        <h1 class="anim">Meu Senior<br>Favorito</h1>
+        <p class="sub anim">A IA que preserva e gerencia o conhecimento institucional</p>
+        <p class="tags anim">Solução de Chat com IA Local &nbsp;·&nbsp; Desplugada da Internet &nbsp;·&nbsp; Dados Criptografados</p>
+      </div>
+      <div class="star">★</div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc1"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 2 — PROBLEMA ══ -->
+    <div class="slide" data-index="1">
+      <div class="slide-body">
+        <div class="s-title anim">O Problema</div>
+        <div class="grid-3">
+          <div class="card a-top anim">
+            <div style="font-size:2.2rem;margin-bottom:8px">👴</div>
+            <div class="num">01</div>
+            <div class="ct">Aposentadorias &amp; Rotatividade</div>
+            <div class="cb">Funcionários experientes saem e levam décadas de conhecimento embora, sem registro estruturado na organização.</div>
+          </div>
+          <div class="card a-top anim">
+            <div style="font-size:2.2rem;margin-bottom:8px">⚠️</div>
+            <div class="num">02</div>
+            <div class="ct">Conhecimento Tácito Perdido</div>
+            <div class="cb">Procedimentos, atalhos e soluções críticas vivem apenas na memória dos veteranos, inacessíveis à equipe.</div>
+          </div>
+          <div class="card a-top anim">
+            <div style="font-size:2.2rem;margin-bottom:8px">🔍</div>
+            <div class="num">03</div>
+            <div class="ct">Novos Colaboradores sem Referência</div>
+            <div class="cb">Equipes mais novas perdem tempo buscando respostas que já existem internamente, sem saber onde encontrá-las.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc2"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 3 — EVOLUÇÃO ══ -->
+    <div class="slide" data-index="2">
+      <div class="slide-body">
+        <div class="s-title anim">A Evolução: Do PoC ao Sistema Completo</div>
+        <div class="evo-grid">
+          <div class="evo-col before anim">
+            <div class="evo-hd b">ANTES — Versão 1.0</div>
+            <ul class="evo-list">
+              <li>Senior cria PDF manualmente</li>
+              <li>PDF é ingerido na IA</li>
+              <li>Equipe conversa com a IA</li>
+              <li>Atualizar = recriar o PDF inteiro</li>
+              <li>Sem controle de acesso</li>
+              <li>Dados em texto puro</li>
+              <li>Sem estrutura organizacional</li>
+            </ul>
+          </div>
+          <div class="evo-arrow anim">➜</div>
+          <div class="evo-col after anim">
+            <div class="evo-hd a">AGORA — Versão 2.0</div>
+            <ul class="evo-list">
+              <li class="hi">Usuários cadastram conteúdo no sistema</li>
+              <li class="hi">Banco: Setor → Área → Tema → Assunto → Mensagens</li>
+              <li>IA carrega sob demanda ao selecionar assunto</li>
+              <li>Atualizar = editar mensagem no sistema</li>
+              <li class="hi">Controle de acesso por tipo de usuário</li>
+              <li class="hi">Mensagens criptografadas AES-256-GCM</li>
+              <li>Máquina IA 100% offline (sem internet)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc3"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 4 — HIERARQUIA ══ -->
+    <div class="slide" data-index="3">
+      <div class="slide-body">
+        <div class="s-title anim">Arquitetura de Conhecimento Estruturada</div>
+        <div class="hier">
+          <div class="hbar anim" style="background:#7B1A1A;margin-left:0"><span class="hl">🏢 Setor</span><span class="hd">Unidade organizacional — ex: GTIC, GCQ, GPC...</span></div>
+          <div class="hbar anim" style="background:#A52020;margin-left:24px"><span class="hl">📂 Área</span><span class="hd">Divisão do setor — ex: Infraestrutura, Desenvolvimento, Qualidade...</span></div>
+          <div class="hbar anim" style="background:#C03030;margin-left:48px"><span class="hl">📁 Tema</span><span class="hd">Grupo de assuntos — ex: Servidores, Redes, Sistemas, Processos...</span></div>
+          <div class="hbar anim" style="background:#885050;margin-left:72px"><span class="hl">📌 Assunto</span><span class="hd">Tópico específico — ex: Configuração de Firewall, Férias, Onboarding...</span></div>
+          <div class="hbar gold anim" style="background:#C87E1A;margin-left:96px"><span class="hl">💬 Mensagens</span><span class="hd" style="color:#7A4000">Conteúdo cadastrado pelos usuários — base de conhecimento da IA (criptografadas)</span></div>
+          <div class="hnote anim">💡 Ao selecionar um assunto na IA, apenas as mensagens daquele assunto são carregadas. Cada sessão é isolada e segura.</div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc4"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 5 — GESTÃO ══ -->
+    <div class="slide" data-index="4">
+      <div class="slide-body">
+        <div class="s-title anim">Sistema de Gestão do Conhecimento</div>
+        <div class="gestao-grid">
+          <div class="gcol anim">
+            <div class="gcol-hd">🔒 Interface de Cadastro · Senha: iadesplugada</div>
+            <div class="gitem"><div class="gnum">1</div><div><strong>Controle de acesso por tipo</strong><span>ADMIN / GESTOR / COLABORADOR</span></div></div>
+            <div class="gitem"><div class="gnum">2</div><div><strong>CRUD da hierarquia completa</strong><span>Setor → Área → Tema → Assunto</span></div></div>
+            <div class="gitem"><div class="gnum">3</div><div><strong>Gestão de mensagens</strong><span>Inserir, editar e excluir por assunto</span></div></div>
+            <div class="gitem"><div class="gnum">4</div><div><strong>Usuários vinculados à área</strong><span>Cada área gerencia seu próprio conteúdo</span></div></div>
+            <div class="gitem"><div class="gnum">5</div><div><strong>Criptografia automática</strong><span>Node.js cifra antes de salvar no MySQL</span></div></div>
+          </div>
+          <div class="gcol anim">
+            <div class="gcol-hd">⚡ Fluxo de uma Mensagem</div>
+            <div class="sync-item"><div class="se">1. Usuário salva mensagem</div><div class="sa">Node.js recebe o texto em claro</div></div>
+            <div class="sync-item"><div class="se">2. Criptografia AES-256-GCM</div><div class="sa">iv:authTag:dadoCifrado → salvo no MySQL</div></div>
+            <div class="sync-item"><div class="se">3. Dados ficam no servidor</div><div class="sa">Nenhum envio automático para a máquina IA</div></div>
+            <div class="sync-item"><div class="se">4. IA busca ao selecionar assunto</div><div class="sa">GET /api/assuntos/:id/mensagens-cifradas</div></div>
+            <div class="gnote">✅ <strong>Sob demanda:</strong> as mensagens só chegam à máquina IA quando o usuário clicar em "Conversar". Nenhuma sincronização automática.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc5"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 6 — FLUXO IA ══ -->
+    <div class="slide" data-index="5">
+      <div class="slide-body">
+        <div class="s-title anim">Como Funciona — Fluxo da IA</div>
+        <div class="flow-steps">
+          <div class="fstep anim"><div class="fn">1</div><div class="fi">🖱️</div><div class="ft">Seleciona Assunto</div><div class="fb">Usuário escolhe o assunto na interface e clica em "Conversar"</div></div>
+          <div class="fstep anim"><div class="fn">2</div><div class="fi">📦</div><div class="ft">Envia Msgs Cifradas</div><div class="fb">Backend busca mensagens cifradas do assunto no MySQL e envia para a máquina IA</div></div>
+          <div class="fstep anim"><div class="fn">3</div><div class="fi">🧠</div><div class="ft">Ingest Local</div><div class="fb">Máquina IA decifra, gera embeddings e indexa no ChromaDB. Se mesmo assunto, pula esta etapa.</div></div>
+          <div class="fstep anim"><div class="fn">4</div><div class="fi">💬</div><div class="ft">Chat Interativo</div><div class="fb">BM25 + Vetorial → Reranker → LLM Llama (temperature=0) → Resposta precisa</div></div>
+        </div>
+        <div class="flow-bar anim">🔒 Máquina IA sem internet &nbsp;·&nbsp; ChromaDB persiste localmente &nbsp;·&nbsp; Botão "🔄 Trocar de Assunto" limpa e recarrega</div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc6"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 7 — SEGURANÇA ══ -->
+    <div class="slide s-dark" data-index="6">
+      <div class="slide-body">
+        <div class="s-title anim">Segurança de Dados</div>
+        <div class="sec-badge anim">🔐 Criptografia AES-256-GCM &nbsp;·&nbsp; Padrão Militar &nbsp;·&nbsp; Mensagens ilegíveis no banco sem a chave</div>
+        <div class="sec-flow anim">
+          <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:white">Mensagem<br>Original</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">ENCRYPT<br>AES-256-GCM</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:#AAAAFF">MySQL<br>(cifrado)</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">DECRYPT<br>AES-256-GCM</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#163E16;border:1.5px solid #44AA44;color:#AAFFAA">Texto Limpo<br>para a IA</div>
+        </div>
+        <div class="sec-cards">
+          <div class="sec-card anim" style="border-color:#4444AA"><div class="sct">🔑 Onde a chave fica</div><div class="scb">Variável de ambiente (.env)<br>Nunca no banco de dados<br>Chave: 64 hex chars = 32 bytes</div></div>
+          <div class="sec-card anim" style="border-color:#A52020"><div class="sct">🎲 IV único por mensagem</div><div class="scb">Vetor gerado aleatoriamente a cada escrita. Nunca reutilizado. Formato: iv:authTag:dado (base64)</div></div>
+          <div class="sec-card anim" style="border-color:#44AA44"><div class="sct">✅ Verificação de integridade</div><div class="scb">GCM detecta qualquer adulteração nos dados cifrados. Dados corrompidos são rejeitados automaticamente.</div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc7"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 8 — ROTAS ══ -->
+    <div class="slide" data-index="7">
+      <div class="slide-body">
+        <div class="s-title anim">Rotas da API</div>
+        <div class="api-grid">
+          <div class="anim">
+            <div class="ablock-hd">🟢 Backend de Gestão — Node.js</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/auth/login</span><span class="rdesc">→ JWT</span></div>
+            <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/tipos-usuario / setores / areas</span></div>
+            <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/usuarios / temas / assuntos</span></div>
+            <div class="route"><span class="mth m-get">GET</span><span class="rpath">/api/mensagens?assunto_id=X</span></div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/mensagens</span><span class="rdesc">cifra + salva</span></div>
+            <div class="route"><span class="mth m-put">PUT</span><span class="rpath">/api/mensagens/:id</span><span class="rdesc">cifra + atualiza</span></div>
+            <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/api/mensagens/:id</span></div>
+            <div class="route"><span class="mth m-get">GET</span><span class="rpath">/api/assuntos/:id/mensagens-cifradas</span></div>
+          </div>
+          <div class="anim">
+            <div class="ablock-hd">🔵 Serviço IA — Python FastAPI (máquina local)</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/ingest</span><span class="rdesc">decifra + ChromaDB</span></div>
+            <div class="route" style="padding-left:52px;font-size:.67rem;color:var(--muted);font-family:Consolas">{ assunto_id, mensagens:[{id, conteudo_cifrado}] }</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/query</span><span class="rdesc">busca + LLM</span></div>
+            <div class="route" style="padding-left:52px;font-size:.67rem;color:var(--muted);font-family:Consolas">{ pergunta, historico[] } → resposta</div>
+            <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/limpar</span><span class="rdesc">limpa ChromaDB</span></div>
+            <div class="cfg-hd">⚙️ Config IA (query.py)</div>
+            <div class="cfg-row"><span class="cfg-key">temperature</span><span class="cfg-val">= 0 — determinístico</span></div>
+            <div class="cfg-row"><span class="cfg-key">TOP_K</span><span class="cfg-val">= 12 — chunks buscados</span></div>
+            <div class="cfg-row"><span class="cfg-key">TOP_K_FINAL</span><span class="cfg-val">= 6 — chunks ao LLM</span></div>
+            <div class="cfg-row"><span class="cfg-key">busca</span><span class="cfg-val">BM25 + Vetorial (híbrida)</span></div>
+            <div class="cfg-row"><span class="cfg-key">reranker</span><span class="cfg-val">FlashRank ms-marco-MiniLM</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc8"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 9 — BENEFÍCIOS ══ -->
+    <div class="slide" data-index="8">
+      <div class="slide-body">
+        <div class="s-title anim">Benefícios</div>
+        <div class="grid-6">
+          <div class="card a-red anim"><div class="bicon">💾</div><div class="ct">Preserva o Conhecimento</div><div class="cb">O legado do senior vive na empresa para sempre, mesmo após sua saída.</div></div>
+          <div class="card a-red anim"><div class="bicon">⚡</div><div class="ct">Respostas Instantâneas</div><div class="cb">Colaboradores resolvem dúvidas em segundos, sem interromper ninguém.</div></div>
+          <div class="card a-red anim"><div class="bicon">🛡️</div><div class="ct">Privacidade &amp; Segurança</div><div class="cb">LLM local, sem envio para a nuvem. Mensagens criptografadas AES-256-GCM.</div></div>
+          <div class="card a-red anim"><div class="bicon">📈</div><div class="ct">Escalável por Setor</div><div class="cb">Cada área tem seu próprio acervo de conhecimento independente.</div></div>
+          <div class="card a-red anim"><div class="bicon">🚀</div><div class="ct">Onboarding Acelerado</div><div class="cb">Novos membros ficam produtivos muito mais rápido com o suporte da IA.</div></div>
+          <div class="card a-red anim"><div class="bicon">🤝</div><div class="ct">Valoriza os Experts</div><div class="cb">O colaborador experiente é reconhecido como fonte essencial de conhecimento.</div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc9"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 10 — PRÓXIMOS PASSOS ══ -->
+    <div class="slide" data-index="9">
+      <div class="slide-body">
+        <div class="s-title anim">Próximos Passos</div>
+        <div class="steps">
+          <div class="step anim"><div class="snum">01</div><div><strong>Banco de Dados</strong><span>Criar as tabelas: TipoUsuario, Setor, Area, Usuario, Tema, Assunto, Mensagens no MySQL.</span></div></div>
+          <div class="step anim"><div class="snum">02</div><div><strong>Backend de Gestão (Node.js)</strong><span>CRUD completo com Sequelize + rota GET /assuntos/:id/mensagens-cifradas para a máquina IA.</span></div></div>
+          <div class="step anim"><div class="snum">03</div><div><strong>Serviço IA (Python FastAPI)</strong><span>Adaptar o rag-poc: rotas /ingest /query /limpar + filtro por assunto_id no ChromaDB local.</span></div></div>
+          <div class="step anim"><div class="snum">04</div><div><strong>Interface (Next.js)</strong><span>Aba de cadastro protegida + seletor de assunto + chat com botão "🔄 Trocar de Assunto".</span></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc10"></span></div>
+    </div>
+
+    <!-- ══ SLIDE 11 — ENCERRAMENTO ══ -->
+    <div class="slide s-end" data-index="10">
+      <div class="ec1"></div><div class="ec2"></div>
+      <div class="econtent anim">
+        <span class="estar">★</span>
+        <h2>Meu Senior Favorito</h2>
+        <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
+      </div>
+      <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc11"></span></div>
+    </div>
+
+  </div><!-- /slides -->
+</div><!-- /main -->
+
+<script>
+const SLIDES = [
+  {title:"Capa"},
+  {title:"O Problema"},
+  {title:"A Evolução"},
+  {title:"Hierarquia do Banco"},
+  {title:"Sistema de Gestão"},
+  {title:"Fluxo da IA"},
+  {title:"Segurança"},
+  {title:"Rotas da API"},
+  {title:"Benefícios"},
+  {title:"Próximos Passos"},
+  {title:"Encerramento"},
+];
+
+const slides  = document.querySelectorAll('.slide');
+const total   = slides.length;
+let current   = 0, busy = false;
+
+// Build sidebar nav
+const navList = document.getElementById('nav-list');
+SLIDES.forEach((s, i) => {
+  const item = document.createElement('div');
+  item.className = 'nav-item' + (i === 0 ? ' active' : '');
+  item.innerHTML = `<div class="n-num">${i+1}</div><div class="n-title">${s.title}</div>`;
+  item.onclick = () => goTo(i);
+  navList.appendChild(item);
+});
+
+// Footer counters
+for (let i = 1; i <= total; i++) {
+  const el = document.getElementById('fc' + i);
+  if (el) el.textContent = `${i} / ${total}`;
+}
+
+function updateUI() {
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100)+'%';
+  document.querySelectorAll('.nav-item').forEach((el,i) => el.classList.toggle('active', i === current));
+  document.getElementById('btn-prev').style.opacity = current === 0 ? '0.25' : '1';
+  document.getElementById('btn-next').style.opacity = current === total-1 ? '0.25' : '1';
+  // scroll active nav item into view
+  const active = navList.querySelector('.nav-item.active');
+  if (active) active.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+function goTo(idx) {
+  if (busy || idx === current || idx < 0 || idx >= total) return;
+  busy = true;
+  const prev = slides[current], next = slides[idx];
+  const dir  = idx > current ? 1 : -1;
+
+  prev.classList.remove('active');
+  prev.classList.add('exit');
+  next.style.transform = `translateX(${dir > 0 ? 40 : -40}px)`;
+  next.style.opacity = '0';
+  next.classList.add('active');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    next.style.transform = 'translateX(0)';
+    next.style.opacity   = '1';
+    setTimeout(() => {
+      prev.classList.remove('exit');
+      prev.style.cssText = '';
+      busy = false;
+    }, 420);
+  }));
+
+  current = idx;
+  updateUI();
+}
+
+document.getElementById('btn-next').onclick = () => goTo(current+1);
+document.getElementById('btn-prev').onclick = () => goTo(current-1);
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); goTo(current+1); }
+  if (e.key==='ArrowLeft')               { e.preventDefault(); goTo(current-1); }
+  if (e.key==='Home') goTo(0);
+  if (e.key==='End')  goTo(total-1);
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend',   e => { const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50) goTo(current+(dx<0?1:-1)); });
+
+updateUI();
+</script>
+</body>
+</html>
