@@ -60,7 +60,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 #ham-btn {
   display: none;
   position: fixed;
-  top: 10px; right: 10px;
+  top: 10px; left: 10px;
   z-index: 200;
   background: var(--red);
   border: none; border-radius: 6px;
@@ -117,22 +117,17 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   pointer-events: none;
   transition: opacity .4s;
 }
 #scroll-hint.hidden { opacity: 0; }
 #scroll-hint .sh-label {
   font-size: .6rem;
-  font-weight: 700;
-  color: var(--red);
+  font-weight: 600;
+  color: rgba(123,26,26,.45);
   letter-spacing: .08em;
   text-transform: uppercase;
-  background: rgba(255,255,255,.88);
-  padding: 3px 10px;
-  border-radius: 20px;
-  box-shadow: 0 1px 6px rgba(0,0,0,.1);
-  white-space: nowrap;
 }
 #scroll-hint .sh-chevron {
   display: flex;
@@ -143,8 +138,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 #scroll-hint .sh-chevron span {
   display: block;
   width: 10px; height: 2px;
-  background: var(--red);
-  opacity: .45;
+  background: rgba(123,26,26,.35);
   border-radius: 2px;
 }
 #scroll-hint .sh-chevron span:nth-child(1) { transform: rotate(40deg) translateX(2px); }
@@ -389,27 +383,23 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
   .gestao-grid,.api-grid { grid-template-columns: 1fr; }
   .sec-cards { grid-template-columns: 1fr; }
 
-  /* scroll hint mobile: só texto pill, sem chevron */
+  /* scroll hint: esconde ícone, exibe só o texto */
   #scroll-hint .sh-chevron { display: none; }
   #scroll-hint .sh-label {
-    font-size: .75rem;
+    font-size: .72rem;
     font-weight: 700;
-    color: var(--red);
-    letter-spacing: .08em;
+    color: rgba(123,26,26,.55);
+    letter-spacing: .1em;
     text-transform: uppercase;
-    background: rgba(255,255,255,.92);
-    padding: 5px 14px;
-    border-radius: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    background: rgba(255,255,255,.75);
+    padding: 3px 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
   }
 
   /* nav items: esconde número, mostra só título */
   .nav-item .n-num { display: none; }
   .nav-item .n-title { font-size: .75rem; }
-
-  /* garante que o ham btn (top-right) não sobreponha o topo do slide */
-  .slide-body { padding-top: 52px; }
-  .s1 .content { padding-top: 52px; }
 }
 
 @media (max-width: 400px) {
@@ -690,19 +680,9 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 
     <!-- ══ 11 — ENCERRAMENTO ══ -->
     <div class="slide s-end" data-index="10">
-      <div class="ec1"></div><div class="ec2"></div>
-      <div class="econtent anim">
-        <span class="estar">★</span>
-        <h2>Meu Senior Favorito</h2>
-        <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
-      </div>
-      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc11"></span></div>
-    </div>
+      
 
-    <!-- ══ 12 — VÍDEO ══ -->
-      <div class="slide s-end" data-index="10">
-    
-      <div class="slide-body">
+           <div class="slide-body">
         <div class="s-title anim">▶ Demonstração em Vídeo</div>
         <p class="s-intro anim">Assista à demonstração completa do sistema Meu Senior Favorito em funcionamento.</p>
         <div class="video-wrap anim">
@@ -717,9 +697,12 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
         </div>
       </div>
       <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc12"></span></div>
+  
+   
     </div>
 
-      <div class="slide s-video" data-index="11"></div>
+    <!-- ══ 12 — VÍDEO ══ -->
+    <div class="slide s-video" data-index="11">
       <div class="ec1"></div><div class="ec2"></div>
       <div class="econtent anim">
         <span class="estar">★</span>
@@ -727,7 +710,8 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
         <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
       </div>
       <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc11"></span></div>
-    </div>
+   
+   </div>
 
   </div>
 </div>
