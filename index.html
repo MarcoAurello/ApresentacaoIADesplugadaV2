@@ -1,1670 +1,685 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Meu Senior Favorito 2.0 — Hemobrás</title>
-  <style>
-    :root {
-      --red: #7B1A1A;
-      --red2: #A52020;
-      --redlt: #FFF5F5;
-      --gold: #C87E1A;
-      --gold2: #F5A623;
-      --white: #FFFFFF;
-      --gray: #F7F7F7;
-      --gline: #E4E4E4;
-      --dark: #1A1A1A;
-      --med: #4A4A4A;
-      --muted: #888888;
-      --green: #1A6B3A;
-      --navy: #1A1A2E;
-      --navy2: #16213E;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #ECECEC;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* ── SIDEBAR ── */
-    #sidebar {
-      width: 210px;
-      flex-shrink: 0;
-      background: #FFFFFF;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      z-index: 10;
-      border-right: 1px solid var(--gline);
-      box-shadow: 2px 0 8px rgba(0, 0, 0, .06);
-    }
-
-    #sidebar .brand {
-      padding: 18px 16px 14px;
-      border-bottom: 1px solid var(--gline);
-      background: var(--red);
-    }
-
-    #sidebar .brand .b-name {
-      font-size: 1rem;
-      font-weight: 800;
-      color: white;
-      letter-spacing: .04em;
-    }
-
-    #sidebar .brand .b-sub {
-      font-size: .65rem;
-      color: rgba(255, 200, 200, .8);
-      margin-top: 3px;
-    }
-
-    #sidebar .nav-list {
-      flex: 1;
-      padding: 6px 0;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 9px 14px;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: all .18s;
-    }
-
-    .nav-item:hover {
-      background: #FFF0F0;
-      border-left-color: #D09090;
-    }
-
-    .nav-item.active {
-      background: #FFF0F0;
-      border-left-color: var(--gold2);
-    }
-
-    .nav-item .n-num {
-      width: 21px;
-      height: 21px;
-      border-radius: 50%;
-      background: var(--gline);
-      color: var(--muted);
-      font-size: .65rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .nav-item.active .n-num {
-      background: var(--red);
-      color: white;
-    }
-
-    .nav-item .n-title {
-      font-size: .72rem;
-      color: var(--muted);
-      line-height: 1.3;
-    }
-
-    .nav-item.active .n-title {
-      color: var(--dark);
-      font-weight: 700;
-    }
-
-    #sidebar .nav-footer {
-      padding: 10px 14px;
-      border-top: 1px solid var(--gline);
-      font-size: .62rem;
-      color: var(--muted);
-      text-align: center;
-      background: var(--gray);
-    }
-
-    /* ── MAIN ── */
-    #main {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #progress {
-      height: 3px;
-      background: var(--gline);
-      flex-shrink: 0;
-    }
-
-    #progress-bar {
-      height: 100%;
-      background: var(--gold2);
-      transition: width .4s ease;
-    }
-
-    #slides {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* ── SLIDES ── */
-    .slide {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transform: translateX(40px);
-      transition: opacity .38s ease, transform .38s ease;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      background: white;
-    }
-
-    .slide.active {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: all;
-    }
-
-    .slide.exit {
-      opacity: 0;
-      transform: translateX(-40px);
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      background: var(--red);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px;
-      height: 26px;
-      flex-shrink: 0;
-      font-size: .68rem;
-    }
-
-    /* ── ARROWS ── */
-    .arrow-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(123, 26, 26, .15);
-      color: var(--red);
-      font-size: 1rem;
-      cursor: pointer;
-      z-index: 50;
-      transition: background .2s, transform .2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .arrow-btn:hover {
-      background: rgba(123, 26, 26, .25);
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    #btn-prev {
-      left: 8px;
-    }
-
-    #btn-next {
-      right: 8px;
-    }
-
-    /* ══ HELPERS ══ */
-    .slide-body {
-      flex: 1;
-      padding: 18px 50px 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .s-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--red);
-      margin-bottom: 5px;
-      padding-bottom: 7px;
-      border-bottom: 2px solid var(--gline);
-    }
-
-    .s-intro {
-      font-size: .8rem;
-      color: var(--muted);
-      line-height: 1.55;
-      margin-bottom: 10px;
-      font-style: italic;
-    }
-
-    .s-dark .s-title {
-      color: white;
-      border-color: #333355;
-    }
-
-    .s-dark .s-intro {
-      color: #AAAACC;
-    }
-
-    /* GRID */
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      flex: 1;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      flex: 1;
-    }
-
-    .grid-6 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      flex: 1;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      flex: 1;
-    }
-
-    /* CARD */
-    .card {
-      background: white;
-      border: 1px solid var(--gline);
-      border-radius: 8px;
-      padding: 14px 14px 14px 18px;
-      box-shadow: 0 1px 6px rgba(0, 0, 0, .05);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card.a-red::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--red);
-    }
-
-    .card.a-top::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--red);
-    }
-
-    .card.a-gold::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--gold2);
-    }
-
-    .card .num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--red);
-      color: white;
-      font-size: .75rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 7px;
-      flex-shrink: 0;
-    }
-
-    .card .ct {
-      font-size: .88rem;
-      font-weight: 700;
-      color: var(--red);
-      margin-bottom: 5px;
-    }
-
-    .card .cb {
-      font-size: .78rem;
-      color: var(--med);
-      line-height: 1.55;
-      flex: 1;
-    }
-
-    /* ══ SLIDE 1 — CAPA ══ */
-    .s1 {
-      background: var(--red) !important;
-    }
-
-    .s1 .c1,
-    .s1 .c2 {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(165, 32, 32, .28);
-    }
-
-    .s1 .c1 {
-      width: 420px;
-      height: 420px;
-      top: -90px;
-      right: -90px;
-    }
-
-    .s1 .c2 {
-      width: 240px;
-      height: 240px;
-      bottom: 30px;
-      right: 160px;
-    }
-
-    .s1 .content {
-      position: relative;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 28px 48px;
-    }
-
-    .s1 .brand {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: white;
-    }
-
-    .s1 .brand span {
-      font-weight: 300;
-      opacity: .55;
-      font-size: .72rem;
-      margin-left: .4rem;
-    }
-
-    .s1 .div {
-      width: 48px;
-      height: 2px;
-      background: rgba(255, 255, 255, .22);
-      margin: 10px 0;
-    }
-
-    .s1 .badge {
-      display: inline-block;
-      background: var(--gold2);
-      color: #3A1A00;
-      font-size: .68rem;
-      font-weight: 700;
-      padding: .15rem .55rem;
-      border-radius: 3px;
-      margin-bottom: 10px;
-    }
-
-    .s1 h1 {
-      font-size: 3.2rem;
-      font-weight: 800;
-      color: white;
-      line-height: 1.1;
-      margin-bottom: 10px;
-    }
-
-    .s1 .sub {
-      font-size: .95rem;
-      color: rgba(255, 220, 220, .85);
-      font-style: italic;
-      margin-bottom: 5px;
-    }
-
-    .s1 .tags {
-      font-size: .72rem;
-      color: rgba(255, 180, 180, .5);
-    }
-
-    .s1 .star {
-      position: absolute;
-      right: 46px;
-      bottom: 44px;
-      font-size: 5rem;
-      opacity: .1;
-      color: white;
-    }
-
-    /* ══ SLIDE 3 — EVOLUÇÃO ══ */
-    .evo-grid {
-      display: grid;
-      grid-template-columns: 1fr 40px 1fr;
-      gap: 0;
-      flex: 1;
-    }
-
-    .evo-col {
-      border-radius: 7px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .evo-col.before {
-      background: var(--gray);
-      border: 1px solid var(--gline);
-    }
-
-    .evo-col.after {
-      background: #FAFAFA;
-      border: 1.5px solid var(--red);
-    }
-
-    .evo-hd {
-      padding: 7px 14px;
-      font-size: .78rem;
-      font-weight: 700;
-      color: white;
-    }
-
-    .evo-hd.b {
-      background: #999;
-    }
-
-    .evo-hd.a {
-      background: var(--red);
-    }
-
-    .evo-intro {
-      padding: 8px 14px 4px;
-      font-size: .75rem;
-      color: var(--muted);
-      font-style: italic;
-      border-bottom: 1px solid var(--gline);
-    }
-
-    .evo-list {
-      padding: 8px 14px;
-      list-style: none;
-      overflow-y: auto;
-    }
-
-    .evo-list li {
-      padding: 5px 0;
-      font-size: .79rem;
-      color: var(--med);
-      display: flex;
-      gap: 6px;
-      border-bottom: 1px solid rgba(0, 0, 0, .04);
-      line-height: 1.4;
-    }
-
-    .evo-list li::before {
-      content: '•';
-      color: var(--red);
-      font-weight: 900;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .evo-list li.hi {
-      color: var(--dark);
-      font-weight: 600;
-    }
-
-    .evo-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: var(--red);
-    }
-
-    /* ══ SLIDE 4 — HIERARQUIA ══ */
-    .hier {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      flex: 1;
-    }
-
-    .hbar {
-      display: flex;
-      align-items: center;
-      border-radius: 6px;
-      padding: 9px 16px;
-    }
-
-    .hbar .hl {
-      font-weight: 700;
-      font-size: .9rem;
-      min-width: 95px;
-      color: white;
-    }
-
-    .hbar .hd {
-      font-size: .77rem;
-      color: rgba(255, 225, 225, .88);
-    }
-
-    .hbar.gold .hl {
-      color: #3A1A00 !important;
-    }
-
-    .hbar.gold .hd {
-      color: #7A4000 !important;
-    }
-
-    .hnote {
-      margin-top: 4px;
-      padding: 8px 14px;
-      background: #FFF8E8;
-      border: 1px solid var(--gold2);
-      border-radius: 6px;
-      font-size: .76rem;
-      color: #5A3000;
-      line-height: 1.5;
-    }
-
-    /* ══ SLIDE 5 — GESTÃO ══ */
-    .gestao-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      flex: 1;
-    }
-
-    .gcol {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .gcol-hd {
-      background: var(--red);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px 6px 0 0;
-      font-weight: 700;
-      font-size: .78rem;
-      text-align: center;
-    }
-
-    .gcol-intro {
-      font-size: .75rem;
-      color: var(--muted);
-      padding: 4px 2px 6px;
-      font-style: italic;
-      border-bottom: 1px solid var(--gline);
-      margin-bottom: 4px;
-    }
-
-    .gitem {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--gline);
-    }
-
-    .gnum {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--red);
-      color: white;
-      font-size: .63rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .gitem strong {
-      font-size: .8rem;
-      color: var(--dark);
-      display: block;
-    }
-
-    .gitem span {
-      font-size: .72rem;
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    .sync-item {
-      background: white;
-      border: 1px solid var(--gline);
-      border-radius: 5px;
-      padding: 6px 10px;
-      border-left: 4px solid var(--gold2);
-    }
-
-    .sync-item .se {
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--red);
-    }
-
-    .sync-item .sa {
-      font-size: .72rem;
-      color: var(--med);
-    }
-
-    .gnote {
-      background: #F0FFF4;
-      border: 1px solid var(--green);
-      border-radius: 5px;
-      padding: 8px 10px;
-      font-size: .75rem;
-      color: #1A4A2A;
-      margin-top: auto;
-      line-height: 1.5;
-    }
-
-    /* ══ SLIDE 6 — FLUXO ══ */
-    .flow-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      flex: 1;
-    }
-
-    .fstep {
-      background: white;
-      border: 1px solid var(--gline);
-      border-radius: 8px;
-      padding: 14px 12px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 1px 5px rgba(0, 0, 0, .04);
-    }
-
-    .fstep:nth-child(odd) {
-      background: var(--gray);
-    }
-
-    .fstep .fn {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--red);
-      color: white;
-      font-size: .95rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 7px;
-    }
-
-    .fstep .fi {
-      font-size: 1.7rem;
-      margin-bottom: 5px;
-    }
-
-    .fstep .ft {
-      font-size: .85rem;
-      font-weight: 700;
-      color: var(--red);
-      margin-bottom: 5px;
-    }
-
-    .fstep .fb {
-      font-size: .75rem;
-      color: var(--med);
-      line-height: 1.45;
-    }
-
-    .flow-bar {
-      background: var(--red);
-      color: white;
-      border-radius: 5px;
-      text-align: center;
-      padding: 5px;
-      font-size: .71rem;
-      margin-top: 8px;
-    }
-
-    /* ══ SLIDE 7 — SEGURANÇA ══ */
-    .s-dark {
-      background: var(--navy) !important;
-    }
-
-    .sec-badge {
-      background: var(--navy2);
-      border: 1px solid #4444AA;
-      border-radius: 6px;
-      padding: 7px;
-      text-align: center;
-      font-size: .83rem;
-      font-weight: 700;
-      color: var(--gold2);
-      margin-bottom: 10px;
-    }
-
-    .sec-intro {
-      font-size: .78rem;
-      color: #AAAACC;
-      line-height: 1.55;
-      margin-bottom: 12px;
-    }
-
-    .sec-flow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .sbox {
-      padding: 7px 10px;
-      border-radius: 6px;
-      font-size: .72rem;
-      font-weight: 700;
-      text-align: center;
-      min-width: 98px;
-    }
-
-    .sarr {
-      font-size: 1rem;
-      color: #777;
-    }
-
-    .sec-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .sec-card {
-      background: var(--navy2);
-      border-radius: 7px;
-      padding: 12px;
-      border-left: 4px solid;
-    }
-
-    .sec-card .sct {
-      font-size: .83rem;
-      font-weight: 700;
-      color: white;
-      margin-bottom: 5px;
-    }
-
-    .sec-card .scb {
-      font-size: .74rem;
-      color: #BBBBDD;
-      line-height: 1.5;
-    }
-
-    /* ══ SLIDE 8 — ROTAS ══ */
-    .api-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      flex: 1;
-    }
-
-    .ablock-hd {
-      background: var(--red);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: .78rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .ablock-intro {
-      font-size: .73rem;
-      color: var(--muted);
-      font-style: italic;
-      margin-bottom: 6px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid var(--gline);
-    }
-
-    .route {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-      padding: 3px 4px;
-      border-radius: 3px;
-      font-size: .71rem;
-      font-family: Consolas, monospace;
-    }
-
-    .route:hover {
-      background: var(--gray);
-    }
-
-    .mth {
-      font-size: .6rem;
-      padding: .08rem .28rem;
-      border-radius: 3px;
-      min-width: 40px;
-      text-align: center;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .m-get {
-      background: #E3F5E1;
-      color: #1A6B3A;
-    }
-
-    .m-post {
-      background: #E3F0FF;
-      color: #1A3A8B;
-    }
-
-    .m-put {
-      background: #FFF3E0;
-      color: #7B4A00;
-    }
-
-    .m-del {
-      background: #FFEBEE;
-      color: #7B1A1A;
-    }
-
-    .m-crud {
-      background: #F3E5F5;
-      color: #4A1A6B;
-    }
-
-    .rpath {
-      color: var(--dark);
-      font-size: .71rem;
-    }
-
-    .rdesc {
-      color: var(--muted);
-      font-size: .63rem;
-      font-family: 'Segoe UI', sans-serif;
-      margin-left: auto;
-    }
-
-    .cfg-hd {
-      background: #1A3A6B;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: .73rem;
-      font-weight: 700;
-      margin: 8px 0 4px;
-    }
-
-    .cfg-row {
-      display: flex;
-      gap: 6px;
-      padding: 2px 4px;
-      font-size: .71rem;
-    }
-
-    .cfg-key {
-      color: var(--red);
-      font-weight: 700;
-      min-width: 85px;
-    }
-
-    .cfg-val {
-      color: var(--med);
-    }
-
-    /* ══ SLIDE 10 — PRÓXIMOS PASSOS ══ */
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      flex: 1;
-    }
-
-    .step:nth-child(odd) {
-      background: var(--gray);
-      border: 1px solid var(--gline);
-    }
-
-    .step:nth-child(even) {
-      background: white;
-      border: 1px solid var(--gline);
-    }
-
-    .snum {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--red);
-      color: white;
-      font-size: .88rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .step strong {
-      font-size: .9rem;
-      font-weight: 700;
-      color: var(--red);
-      display: block;
-      margin-bottom: 3px;
-    }
-
-    .step .sdesc {
-      font-size: .78rem;
-      color: var(--med);
-      line-height: 1.5;
-    }
-
-    /* ══ SLIDE 11 ══ */
-    .s-end {
-      background: var(--red) !important;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .s-end .ec1,
-    .s-end .ec2 {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(165, 32, 32, .28);
-    }
-
-    .s-end .ec1 {
-      width: 380px;
-      height: 380px;
-      top: -100px;
-      right: -100px;
-    }
-
-    .s-end .ec2 {
-      width: 220px;
-      height: 220px;
-      bottom: -40px;
-      left: -40px;
-    }
-
-    .s-end .econtent {
-      position: relative;
-      z-index: 1;
-    }
-
-    .s-end .estar {
-      font-size: 5rem;
-      display: block;
-      margin-bottom: 10px;
-      color: var(--gold2);
-    }
-
-    .s-end h2 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 8px;
-    }
-
-    .s-end p {
-      font-size: 1rem;
-      color: rgba(255, 220, 220, .85);
-      font-style: italic;
-    }
-
-    /* ══ ANIM ══ */
-    .slide.active .anim {
-      animation: fup .42s ease both;
-    }
-
-    .slide.active .anim:nth-child(1) {
-      animation-delay: .07s
-    }
-
-    .slide.active .anim:nth-child(2) {
-      animation-delay: .14s
-    }
-
-    .slide.active .anim:nth-child(3) {
-      animation-delay: .21s
-    }
-
-    .slide.active .anim:nth-child(4) {
-      animation-delay: .28s
-    }
-
-    .slide.active .anim:nth-child(5) {
-      animation-delay: .35s
-    }
-
-    @keyframes fup {
-      from {
-        opacity: 0;
-        transform: translateY(14px)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Senior Favorito 2.0 — Hemobrás</title>
+<style>
+:root {
+  --red:   #7B1A1A; --red2:  #A52020; --redlt: #FFF5F5;
+  --gold:  #C87E1A; --gold2: #F5A623;
+  --white: #FFFFFF; --gray:  #F7F7F7; --gline: #E4E4E4;
+  --dark:  #1A1A1A; --med:   #4A4A4A; --muted: #888888;
+  --green: #1A6B3A; --navy:  #1A1A2E; --navy2: #16213E;
+  --sb-w: 200px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex; height:100vh; overflow:hidden; }
+
+/* ═══ SIDEBAR ═══ */
+#sidebar {
+  width: var(--sb-w);
+  flex-shrink: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 100;
+  border-right: 1px solid var(--gline);
+  box-shadow: 2px 0 8px rgba(0,0,0,.06);
+  transition: transform .3s ease, width .3s ease;
+}
+#sidebar .brand {
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid var(--gline);
+  background: var(--red);
+  flex-shrink: 0;
+}
+#sidebar .brand .b-name { font-size: clamp(.8rem,1.5vw,1rem); font-weight:800; color:white; letter-spacing:.04em; }
+#sidebar .brand .b-sub  { font-size:.62rem; color:rgba(255,200,200,.8); margin-top:3px; }
+#sidebar .nav-list { flex:1; padding:4px 0; overflow-y:auto; }
+.nav-item {
+  display:flex; align-items:center; gap:8px; padding:8px 12px;
+  cursor:pointer; border-left:3px solid transparent; transition:all .18s;
+}
+.nav-item:hover  { background:#FFF0F0; border-left-color:#D09090; }
+.nav-item.active { background:#FFF0F0; border-left-color:var(--gold2); }
+.nav-item .n-num {
+  width:20px; height:20px; border-radius:50%;
+  background:var(--gline); color:var(--muted);
+  font-size:.62rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.nav-item.active .n-num { background:var(--red); color:white; }
+.nav-item .n-title { font-size:.7rem; color:var(--muted); line-height:1.3; }
+.nav-item.active .n-title { color:var(--dark); font-weight:700; }
+#sidebar .nav-footer { padding:8px 12px; border-top:1px solid var(--gline); font-size:.6rem; color:var(--muted); text-align:center; background:var(--gray); flex-shrink:0; }
+
+/* hamburger button */
+#ham-btn {
+  display: none;
+  position: fixed;
+  top: 10px; left: 10px;
+  z-index: 200;
+  background: var(--red);
+  border: none; border-radius: 6px;
+  width: 36px; height: 36px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+#ham-btn span { display:block; width:18px; height:2px; background:white; border-radius:2px; }
+
+/* overlay for mobile sidebar */
+#sb-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 90;
+}
+
+/* ═══ MAIN ═══ */
+#main { flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; }
+#progress { height:3px; background:var(--gline); flex-shrink:0; }
+#progress-bar { height:100%; background:var(--gold2); transition:width .4s ease; }
+#slides { flex:1; position:relative; overflow:hidden; min-height:0; }
+
+/* ═══ SLIDES ═══ */
+.slide {
+  position:absolute; inset:0;
+  opacity:0; transform:translateX(40px);
+  transition:opacity .38s ease,transform .38s ease;
+  pointer-events:none;
+  display:flex; flex-direction:column;
+  background:white;
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit   { opacity:0; transform:translateX(-40px); }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  background:var(--red); color:white;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 16px; height:26px; flex-shrink:0;
+  font-size: clamp(.55rem,.9vw,.68rem);
+}
+
+/* ═══ ARROWS ═══ */
+.arrow-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:32px; height:32px; border-radius:50%; border:none;
+  background:rgba(123,26,26,.12); color:var(--red);
+  font-size:.95rem; cursor:pointer; z-index:50;
+  transition:background .2s,transform .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.arrow-btn:hover { background:rgba(123,26,26,.25); transform:translateY(-50%) scale(1.1); }
+#btn-prev { left:6px; }
+#btn-next { right:6px; }
+
+/* ═══ SLIDE BODY ═══ */
+.slide-body {
+  flex:1; min-height:0;
+  padding: clamp(10px,2vh,18px) clamp(36px,5vw,50px) 6px;
+  overflow-y:auto;
+  display:flex; flex-direction:column;
+}
+.s-title {
+  font-size: clamp(1rem,2.2vw,1.35rem);
+  font-weight:800; color:var(--red);
+  margin-bottom:5px; padding-bottom:6px;
+  border-bottom:2px solid var(--gline);
+  flex-shrink:0;
+}
+.s-intro {
+  font-size: clamp(.7rem,1.1vw,.8rem);
+  color:var(--muted); line-height:1.5;
+  margin-bottom:8px; font-style:italic; flex-shrink:0;
+}
+.s-dark .s-title { color:white; border-color:#333355; }
+.s-dark .s-intro { color:#AAAACC; }
+
+/* ═══ GRIDS ═══ */
+.grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; flex:1; min-height:0; }
+.grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; flex:1; min-height:0; }
+.grid-6 { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:9px; flex:1; min-height:0; }
+.grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; flex:1; min-height:0; }
+
+/* ═══ CARD ═══ */
+.card {
+  background:white; border:1px solid var(--gline); border-radius:8px;
+  padding:12px 12px 12px 16px;
+  box-shadow:0 1px 5px rgba(0,0,0,.05);
+  display:flex; flex-direction:column;
+  position:relative; overflow:hidden;
+  min-height:0;
+}
+.card.a-red::before  { content:''; position:absolute; top:0;left:0; width:4px; height:100%; background:var(--red); }
+.card.a-top::before  { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:var(--red); }
+.card.a-gold::before { content:''; position:absolute; top:0;left:0; width:4px; height:100%; background:var(--gold2); }
+.card .num { width:22px; height:22px; border-radius:50%; background:var(--red); color:white; font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-bottom:6px; flex-shrink:0; }
+.card .ct  { font-size: clamp(.75rem,1.2vw,.88rem); font-weight:700; color:var(--red); margin-bottom:4px; }
+.card .cb  { font-size: clamp(.68rem,1vw,.78rem); color:var(--med); line-height:1.5; flex:1; overflow:hidden; }
+
+/* ═══ SLIDE 1 — CAPA ═══ */
+.s1 { background:var(--red) !important; }
+.s1 .c1,.s1 .c2 { position:absolute; border-radius:50%; background:rgba(165,32,32,.28); }
+.s1 .c1 { width:min(420px,60vw); height:min(420px,60vw); top:-90px; right:-90px; }
+.s1 .c2 { width:min(240px,35vw); height:min(240px,35vw); bottom:30px; right:160px; }
+.s1 .content { position:relative; flex:1; display:flex; flex-direction:column; justify-content:center; padding:clamp(16px,3vh,28px) clamp(20px,5vw,48px); }
+.s1 .brand   { font-size:clamp(.9rem,1.8vw,1.25rem); font-weight:800; color:white; }
+.s1 .brand span { font-weight:300; opacity:.55; font-size:.68rem; margin-left:.4rem; }
+.s1 .div     { width:48px; height:2px; background:rgba(255,255,255,.22); margin:8px 0; }
+.s1 .badge   { display:inline-block; background:var(--gold2); color:#3A1A00; font-size:.66rem; font-weight:700; padding:.14rem .5rem; border-radius:3px; margin-bottom:8px; }
+.s1 h1       { font-size:clamp(1.8rem,5vw,3.2rem); font-weight:800; color:white; line-height:1.1; margin-bottom:8px; }
+.s1 .sub     { font-size:clamp(.78rem,1.4vw,.95rem); color:rgba(255,220,220,.85); font-style:italic; margin-bottom:4px; }
+.s1 .tags    { font-size:clamp(.62rem,1vw,.72rem); color:rgba(255,180,180,.5); }
+.s1 .star    { position:absolute; right:clamp(20px,4vw,46px); bottom:clamp(20px,4vh,44px); font-size:clamp(3rem,7vw,5rem); opacity:.1; color:white; }
+.s1 .vid-btn {
+  display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+  background:var(--gold2); color:#3A1A00;
+  font-weight:700; font-size:clamp(.75rem,1.3vw,.85rem);
+  padding:.5rem 1.1rem; border-radius:5px; text-decoration:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.2); transition:background .2s; width:fit-content;
+}
+.s1 .vid-btn:hover { background:#E09010; }
+
+/* ═══ SLIDE 3 — EVOLUÇÃO ═══ */
+.evo-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:0; flex:1; min-height:0; }
+.evo-col  { border-radius:7px; overflow:hidden; display:flex; flex-direction:column; min-height:0; }
+.evo-col.before { background:var(--gray); border:1px solid var(--gline); }
+.evo-col.after  { background:#FAFAFA; border:1.5px solid var(--red); }
+.evo-hd   { padding:6px 12px; font-size:clamp(.68rem,1.1vw,.78rem); font-weight:700; color:white; flex-shrink:0; }
+.evo-hd.b { background:#999; }
+.evo-hd.a { background:var(--red); }
+.evo-intro { padding:6px 12px 4px; font-size:clamp(.65rem,.9vw,.75rem); color:var(--muted); font-style:italic; border-bottom:1px solid var(--gline); flex-shrink:0; }
+.evo-list  { padding:6px 12px; list-style:none; overflow-y:auto; flex:1; }
+.evo-list li { padding:4px 0; font-size:clamp(.68rem,1vw,.79rem); color:var(--med); display:flex; gap:5px; border-bottom:1px solid rgba(0,0,0,.04); line-height:1.4; }
+.evo-list li::before { content:'•'; color:var(--red); font-weight:900; flex-shrink:0; margin-top:1px; }
+.evo-list li.hi { color:var(--dark); font-weight:600; }
+.evo-arrow { display:flex; align-items:center; justify-content:center; font-size:clamp(1rem,2vw,1.5rem); color:var(--red); width:40px; flex-shrink:0; }
+
+/* ═══ SLIDE 4 — HIERARQUIA ═══ */
+.hier { display:flex; flex-direction:column; gap:4px; flex:1; min-height:0; overflow-y:auto; }
+.hbar { display:flex; align-items:center; border-radius:6px; padding:clamp(6px,1.2vh,9px) 14px; flex-shrink:0; }
+.hbar .hl { font-weight:700; font-size:clamp(.75rem,1.2vw,.9rem); min-width:80px; color:white; }
+.hbar .hd { font-size:clamp(.65rem,.9vw,.77rem); color:rgba(255,225,225,.88); }
+.hbar.gold .hl { color:#3A1A00 !important; }
+.hbar.gold .hd { color:#7A4000 !important; }
+.hnote { margin-top:4px; padding:7px 12px; background:#FFF8E8; border:1px solid var(--gold2); border-radius:6px; font-size:clamp(.65rem,.9vw,.76rem); color:#5A3000; line-height:1.5; flex-shrink:0; }
+
+/* ═══ SLIDE 5 — GESTÃO ═══ */
+.gestao-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; flex:1; min-height:0; }
+.gcol { display:flex; flex-direction:column; gap:5px; min-height:0; overflow-y:auto; }
+.gcol-hd { background:var(--red); color:white; padding:5px 10px; border-radius:6px 6px 0 0; font-weight:700; font-size:clamp(.68rem,1vw,.78rem); text-align:center; flex-shrink:0; }
+.gcol-intro { font-size:clamp(.65rem,.9vw,.75rem); color:var(--muted); padding:3px 2px 5px; font-style:italic; border-bottom:1px solid var(--gline); margin-bottom:3px; flex-shrink:0; }
+.gitem { display:flex; align-items:flex-start; gap:7px; padding:4px 0; border-bottom:1px solid var(--gline); }
+.gnum  { width:17px; height:17px; border-radius:50%; background:var(--red); color:white; font-size:.6rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.gitem strong { font-size:clamp(.72rem,1vw,.8rem); color:var(--dark); display:block; }
+.gitem span   { font-size:clamp(.62rem,.85vw,.72rem); color:var(--muted); font-style:italic; }
+.sync-item { background:white; border:1px solid var(--gline); border-radius:5px; padding:5px 9px; border-left:4px solid var(--gold2); flex-shrink:0; }
+.sync-item .se { font-size:clamp(.68rem,1vw,.78rem); font-weight:700; color:var(--red); }
+.sync-item .sa { font-size:clamp(.62rem,.85vw,.72rem); color:var(--med); }
+.gnote { background:#F0FFF4; border:1px solid var(--green); border-radius:5px; padding:7px 9px; font-size:clamp(.65rem,.9vw,.75rem); color:#1A4A2A; margin-top:auto; line-height:1.5; flex-shrink:0; }
+
+/* ═══ SLIDE 6 — FLUXO ═══ */
+.flow-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; flex:1; min-height:0; }
+.fstep { background:white; border:1px solid var(--gline); border-radius:8px; padding:12px 10px; text-align:center; display:flex; flex-direction:column; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,.04); overflow:hidden; }
+.fstep:nth-child(odd) { background:var(--gray); }
+.fstep .fn { width:28px; height:28px; border-radius:50%; background:var(--red); color:white; font-size:.88rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-bottom:6px; flex-shrink:0; }
+.fstep .fi { font-size:clamp(1.2rem,2.5vw,1.7rem); margin-bottom:5px; flex-shrink:0; }
+.fstep .ft { font-size:clamp(.75rem,1.2vw,.85rem); font-weight:700; color:var(--red); margin-bottom:4px; flex-shrink:0; }
+.fstep .fb { font-size:clamp(.65rem,.9vw,.75rem); color:var(--med); line-height:1.4; overflow:hidden; }
+.flow-bar  { background:var(--red); color:white; border-radius:5px; text-align:center; padding:5px; font-size:clamp(.62rem,.9vw,.71rem); margin-top:7px; flex-shrink:0; }
+
+/* ═══ SLIDE 7 — SEGURANÇA ═══ */
+.s-dark { background:var(--navy) !important; }
+.sec-badge { background:var(--navy2); border:1px solid #4444AA; border-radius:6px; padding:6px; text-align:center; font-size:clamp(.72rem,1.1vw,.83rem); font-weight:700; color:var(--gold2); margin-bottom:8px; flex-shrink:0; }
+.sec-intro { font-size:clamp(.68rem,.9vw,.78rem); color:#AAAACC; line-height:1.5; margin-bottom:10px; flex-shrink:0; }
+.sec-flow  { display:flex; align-items:center; justify-content:center; gap:5px; margin-bottom:10px; flex-wrap:wrap; flex-shrink:0; }
+.sbox { padding:6px 8px; border-radius:6px; font-size:clamp(.62rem,.9vw,.72rem); font-weight:700; text-align:center; min-width:88px; }
+.sarr { font-size:.9rem; color:#777; }
+.sec-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:9px; flex-shrink:0; }
+.sec-card { background:var(--navy2); border-radius:7px; padding:10px; border-left:4px solid; }
+.sec-card .sct { font-size:clamp(.72rem,1vw,.83rem); font-weight:700; color:white; margin-bottom:4px; }
+.sec-card .scb { font-size:clamp(.63rem,.85vw,.74rem); color:#BBBBDD; line-height:1.45; }
+
+/* ═══ SLIDE 8 — ROTAS ═══ */
+.api-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; flex:1; min-height:0; }
+.api-col  { overflow-y:auto; min-height:0; }
+.ablock-hd { background:var(--red); color:white; padding:5px 9px; border-radius:5px; font-size:clamp(.68rem,1vw,.78rem); font-weight:700; margin-bottom:4px; flex-shrink:0; }
+.ablock-intro { font-size:clamp(.63rem,.85vw,.73rem); color:var(--muted); font-style:italic; margin-bottom:5px; padding-bottom:4px; border-bottom:1px solid var(--gline); }
+.route { display:flex; align-items:baseline; gap:5px; padding:3px 3px; border-radius:3px; font-size:clamp(.62rem,.85vw,.71rem); font-family:Consolas,monospace; }
+.route:hover { background:var(--gray); }
+.mth { font-size:.58rem; padding:.07rem .25rem; border-radius:3px; min-width:38px; text-align:center; font-weight:700; flex-shrink:0; }
+.m-get  { background:#E3F5E1; color:#1A6B3A; }
+.m-post { background:#E3F0FF; color:#1A3A8B; }
+.m-put  { background:#FFF3E0; color:#7B4A00; }
+.m-del  { background:#FFEBEE; color:#7B1A1A; }
+.m-crud { background:#F3E5F5; color:#4A1A6B; }
+.rpath  { color:var(--dark); font-size:clamp(.62rem,.85vw,.71rem); }
+.rdesc  { color:var(--muted); font-size:.6rem; font-family:'Segoe UI',sans-serif; margin-left:auto; white-space:nowrap; }
+.cfg-hd  { background:#1A3A6B; color:white; padding:3px 9px; border-radius:5px; font-size:clamp(.62rem,.85vw,.73rem); font-weight:700; margin:7px 0 3px; }
+.cfg-row { display:flex; gap:5px; padding:2px 3px; font-size:clamp(.62rem,.85vw,.71rem); }
+.cfg-key { color:var(--red); font-weight:700; min-width:80px; }
+.cfg-val { color:var(--med); }
+
+/* ═══ SLIDE 10 — PRÓXIMOS PASSOS ═══ */
+.steps { display:flex; flex-direction:column; gap:7px; flex:1; min-height:0; overflow-y:auto; }
+.step  { display:flex; align-items:flex-start; gap:12px; padding:10px 14px; border-radius:8px; flex:1; min-height:min-content; }
+.step:nth-child(odd)  { background:var(--gray); border:1px solid var(--gline); }
+.step:nth-child(even) { background:white; border:1px solid var(--gline); }
+.snum { width:28px; height:28px; border-radius:50%; background:var(--red); color:white; font-size:.82rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step strong { font-size:clamp(.78rem,1.2vw,.9rem); font-weight:700; color:var(--red); display:block; margin-bottom:3px; }
+.step .sdesc { font-size:clamp(.68rem,.95vw,.78rem); color:var(--med); line-height:1.5; }
+
+/* ═══ SLIDE 11 ═══ */
+.s-end { background:var(--red) !important; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; gap:16px; flex-direction:column; }
+.s-end .ec1,.s-end .ec2 { position:absolute; border-radius:50%; background:rgba(165,32,32,.28); }
+.s-end .ec1 { width:min(380px,55vw); height:min(380px,55vw); top:-100px; right:-100px; }
+.s-end .ec2 { width:min(220px,35vw); height:min(220px,35vw); bottom:-40px; left:-40px; }
+.s-end .econtent { position:relative; z-index:1; }
+.s-end .estar { font-size:clamp(3rem,7vw,5rem); display:block; margin-bottom:8px; color:var(--gold2); }
+.s-end h2 { font-size:clamp(1.6rem,4vw,2.8rem); font-weight:800; color:white; margin-bottom:8px; }
+.s-end p  { font-size:clamp(.82rem,1.4vw,1rem); color:rgba(255,220,220,.85); font-style:italic; }
+.s-end .vid-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--gold2); color:#3A1A00;
+  font-weight:700; font-size:clamp(.75rem,1.3vw,.85rem);
+  padding:.5rem 1.2rem; border-radius:5px; text-decoration:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.2); transition:background .2s;
+  position:relative; z-index:1;
+}
+.s-end .vid-btn:hover { background:#E09010; }
+
+/* ═══ ANIM ═══ */
+.slide.active .anim { animation:fup .42s ease both; }
+.slide.active .anim:nth-child(1){animation-delay:.07s}
+.slide.active .anim:nth-child(2){animation-delay:.14s}
+.slide.active .anim:nth-child(3){animation-delay:.21s}
+.slide.active .anim:nth-child(4){animation-delay:.28s}
+.slide.active .anim:nth-child(5){animation-delay:.35s}
+@keyframes fup { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+/* ═══ RESPONSIVO ═══ */
+@media (max-width: 900px) {
+  :root { --sb-w: 170px; }
+  .slide-body { padding: 12px 32px 6px; }
+  .evo-grid { grid-template-columns: 1fr; }
+  .evo-arrow { width:100%; justify-content:center; padding:4px 0; font-size:1.4rem; }
+  .hier .hbar { margin-left: 0 !important; }
+  .flow-steps { grid-template-columns: repeat(2,1fr); }
+  .sec-cards  { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 640px) {
+  #ham-btn { display:flex; }
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    transform: translateX(-100%);
+    width: 200px !important;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #sb-overlay.open { display:block; }
+  #main { width: 100%; }
+  .slide-body { padding: 10px 20px 6px; }
+  .footer .f-author { display:none; }
+  .grid-3,.grid-6 { grid-template-columns: 1fr 1fr; }
+  .grid-4,.flow-steps { grid-template-columns: repeat(2,1fr); }
+  .gestao-grid,.api-grid { grid-template-columns: 1fr; }
+  .sec-cards { grid-template-columns: 1fr; }
+  .arrow-btn { width:28px; height:28px; font-size:.8rem; }
+  #btn-prev { left:36px; }
+}
+
+@media (max-width: 400px) {
+  .grid-3,.grid-6 { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-
 <body>
 
-  <!-- SIDEBAR -->
-  <nav id="sidebar">
-    <div class="brand">
-      <div class="b-name">Hemobrás</div>
-      <div class="b-sub">GTIC — IA Desplugada</div>
-    </div>
-    <div class="nav-list" id="nav-list"></div>
-    <div class="nav-footer">Marco Aurélio · 2026</div>
-  </nav>
+<button id="ham-btn" onclick="toggleSidebar()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div id="sb-overlay" onclick="toggleSidebar()"></div>
 
-  <!-- MAIN -->
-  <div id="main">
-    <div id="progress">
-      <div id="progress-bar"></div>
-    </div>
-    <div id="slides">
-      <button class="arrow-btn" id="btn-prev">&#8592;</button>
-      <button class="arrow-btn" id="btn-next">&#8594;</button>
-
-      <!-- ══ 1 — CAPA ══ -->
-      <div class="slide s1 active" data-index="0">
-        <div class="c1"></div>
-        <div class="c2"></div>
-        <div class="content">
-          <div class="brand anim">Hemobrás <span>Gerência de Tecnologia da Informação e Comunicação — GTIC</span></div>
-          <div class="div anim"></div>
-          <div class="badge anim">Versão 2.0</div>
-          <h1 class="anim">Meu Senior<br>Favorito</h1>
-          <p class="sub anim">A IA que preserva e gerencia o conhecimento institucional</p>
-          <p class="sub anim">Solução de Chat com IA Local &nbsp;·&nbsp; Desplugada da Internet &nbsp;·&nbsp; Dados
-            Criptografados</p>
-          <a href="https://youtu.be/CFrANheqjTc" target="_blank" style="
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #F5A623;
-  color: #3A1A00;
-  font-weight: 700;
-  font-size: .85rem;
-  padding: .55rem 1.2rem;
-  border-radius: 5px;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
-  transition: background .2s;
-" onmouseover="this.style.background='#E09010'" onmouseout="this.style.background='#F5A623'">
-            ▶ Clique para ver o vídeo do sistema
-          </a>
-        </div>
-        <div class="star">★</div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc1"></span></div>
-      </div>
-
-      <!-- ══ 2 — PROBLEMA ══ -->
-      <div class="slide" data-index="1">
-        <div class="slide-body">
-          <div class="s-title anim">O Problema</div>
-          <p class="s-intro anim">A Hemobrás, como qualquer organização de alta complexidade técnica, enfrenta um
-            desafio silencioso: o conhecimento crítico está concentrado em pessoas, não em sistemas. Quando essas
-            pessoas saem, o conhecimento vai com elas.</p>
-          <div class="grid-3">
-            <div class="card a-top anim">
-              <div style="font-size:2rem;margin-bottom:7px">👴</div>
-              <div class="num">01</div>
-              <div class="ct">Aposentadorias &amp; Rotatividade</div>
-              <div class="cb">Funcionários experientes acumulam anos de expertise em processos únicos da organização.
-                Quando se aposentam ou são transferidos, levam consigo um acervo de conhecimento que nenhum manual
-                formal conseguiu registrar. A curva de reposição é longa e custosa.</div>
-            </div>
-            <div class="card a-top anim">
-              <div style="font-size:2rem;margin-bottom:7px">⚠️</div>
-              <div class="num">02</div>
-              <div class="ct">Conhecimento Tácito Perdido</div>
-              <div class="cb">Procedimentos operacionais, atalhos de sistema, decisões históricas e soluções para
-                problemas recorrentes existem apenas na memória dos veteranos. Esse conhecimento tácito raramente é
-                documentado e quase nunca é transferido de forma estruturada para os mais novos.</div>
-            </div>
-            <div class="card a-top anim">
-              <div style="font-size:2rem;margin-bottom:7px">🔍</div>
-              <div class="num">03</div>
-              <div class="ct">Novos Colaboradores sem Referência</div>
-              <div class="cb">Profissionais recém-chegados perdem horas buscando respostas que já foram descobertas e
-                resolvidas internamente. Sem uma base de consulta confiável, recorrem a colegas sobrecarregados,
-                reduzindo a produtividade geral da equipe.</div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc2"></span></div>
-      </div>
-
-      <!-- ══ 3 — EVOLUÇÃO ══ -->
-      <div class="slide" data-index="2">
-        <div class="slide-body">
-          <div class="s-title anim">A Evolução: Do PoC ao Sistema Completo</div>
-          <p class="s-intro anim">A versão 1.0 validou a viabilidade técnica com um PoC baseado em PDF. A versão 2.0
-            escala a solução para um sistema robusto, com gestão estruturada, segurança de dados e independência de
-            internet.</p>
-          <div class="evo-grid">
-            <div class="evo-col before anim">
-              <div class="evo-hd b">ANTES — Versão 1.0 (PoC validado)</div>
-              <div class="evo-intro">Prova de conceito funcional, mas de operação manual e sem estrutura de gestão.
-              </div>
-              <ul class="evo-list">
-                <li>Senior escreve um PDF com seu conhecimento</li>
-                <li>PDF é carregado manualmente na IA</li>
-                <li>Equipe conversa com a IA via chat</li>
-                <li>Para atualizar: recriar e reupar o PDF inteiro</li>
-                <li>Sem controle de quem acessa o quê</li>
-                <li>Conteúdo em texto puro no servidor</li>
-                <li>Sem hierarquia organizacional de temas</li>
-              </ul>
-            </div>
-            <div class="evo-arrow anim">➜</div>
-            <div class="evo-col after anim">
-              <div class="evo-hd a">AGORA — Versão 2.0 (Sistema Completo)</div>
-              <div class="evo-intro">Plataforma com gestão de conteúdo, criptografia e IA desplugada da internet.</div>
-              <ul class="evo-list">
-                <li class="hi">Usuários cadastram conteúdo diretamente no sistema</li>
-                <li class="hi">Hierarquia: Setor → Área → Tema → Assunto → Mensagens</li>
-                <li>IA carrega o conhecimento sob demanda, por assunto</li>
-                <li>Atualizar = editar uma mensagem no sistema</li>
-                <li class="hi">Controle de acesso por tipo de usuário</li>
-                <li class="hi">Todo conteúdo criptografado com AES-256-GCM</li>
-                <li>Máquina IA totalmente offline — zero dependência de internet</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc3"></span></div>
-      </div>
-
-      <!-- ══ 4 — HIERARQUIA ══ -->
-      <div class="slide" data-index="3">
-        <div class="slide-body">
-          <div class="s-title anim">Arquitetura de Conhecimento Estruturada</div>
-          <p class="s-intro anim">O conhecimento é organizado em cinco níveis hierárquicos, permitindo que cada área da
-            organização gerencie seu próprio acervo de forma independente e com granularidade total. A IA nunca
-            "mistura" conteúdo de assuntos distintos.</p>
-          <div class="hier">
-            <div class="hbar anim" style="background:#7B1A1A"><span class="hl">🏢 Setor</span><span class="hd">Unidade
-                organizacional de alto nível — ex: GTIC, GCQ, GPC, GPA...</span></div>
-            <div class="hbar anim" style="background:#A52020;margin-left:22px"><span class="hl">📂 Área</span><span
-                class="hd">Subdivisão do setor — ex: Infraestrutura, Desenvolvimento, Controle de Qualidade...</span>
-            </div>
-            <div class="hbar anim" style="background:#C03030;margin-left:44px"><span class="hl">📁 Tema</span><span
-                class="hd">Agrupamento de assuntos relacionados — ex: Servidores, Redes, Sistemas, Processos
-                Internos...</span></div>
-            <div class="hbar anim" style="background:#885050;margin-left:66px"><span class="hl">📌 Assunto</span><span
-                class="hd">Tópico específico e consultável — ex: Configuração de Firewall, Controle de Ponto,
-                Onboarding...</span></div>
-            <div class="hbar gold anim" style="background:#C87E1A;margin-left:88px"><span class="hl">💬
-                Mensagens</span><span class="hd" style="color:#7A4000">Conteúdo real cadastrado pelos especialistas —
-                base que alimenta a IA (armazenado criptografado)</span></div>
-            <div class="hnote anim">💡 <strong>Isolamento por sessão:</strong> ao selecionar um assunto na IA, somente
-              as mensagens daquele assunto específico são carregadas na sessão de chat. O modelo não tem acesso a nenhum
-              outro conteúdo do sistema durante a conversa.</div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc4"></span></div>
-      </div>
-
-      <!-- ══ 5 — GESTÃO ══ -->
-      <div class="slide" data-index="4">
-        <div class="slide-body">
-          <div class="s-title anim">Sistema de Gestão do Conhecimento</div>
-          <p class="s-intro anim">Uma aba protegida por senha dá acesso ao painel de administração, onde gestores de
-            cada área mantêm o conteúdo atualizado. Toda alteração é transparente para o usuário final da IA.</p>
-          <div class="gestao-grid">
-            <div class="gcol anim">
-              <div class="gcol-hd">🔒 Painel de Cadastro — Senha: iadesplugada</div>
-              <div class="gcol-intro">Acesso restrito para usuários autorizados. Cada perfil tem permissões específicas
-                dentro de sua área.</div>
-              <div class="gitem">
-                <div class="gnum">1</div>
-                <div><strong>Perfis de acesso</strong><span>ADMIN gerencia tudo · GESTOR administra sua área ·
-                    COLABORADOR consulta apenas</span></div>
-              </div>
-              <div class="gitem">
-                <div class="gnum">2</div>
-                <div><strong>CRUD completo da hierarquia</strong><span>Criar, editar e remover Setores, Áreas, Temas e
-                    Assuntos</span></div>
-              </div>
-              <div class="gitem">
-                <div class="gnum">3</div>
-                <div><strong>Gestão granular de mensagens</strong><span>Inserir novos conhecimentos, corrigir
-                    informações desatualizadas ou remover conteúdo obsoleto</span></div>
-              </div>
-              <div class="gitem">
-                <div class="gnum">4</div>
-                <div><strong>Usuários vinculados à área</strong><span>Cada colaborador só pode gerir o conteúdo da sua
-                    própria área organizacional</span></div>
-              </div>
-              <div class="gitem">
-                <div class="gnum">5</div>
-                <div><strong>Criptografia automática e transparente</strong><span>O usuário escreve em texto claro — o
-                    sistema cifra antes de salvar. Nenhum dado sensível fica exposto.</span></div>
-              </div>
-            </div>
-            <div class="gcol anim">
-              <div class="gcol-hd">⚡ Ciclo de Vida de uma Mensagem</div>
-              <div class="gcol-intro">Do cadastro pelo especialista até chegar na IA, cada mensagem percorre um pipeline
-                seguro e controlado.</div>
-              <div class="sync-item">
-                <div class="se">1. Especialista digita o conteúdo</div>
-                <div class="sa">Texto claro submetido via interface de cadastro</div>
-              </div>
-              <div class="sync-item">
-                <div class="se">2. Criptografia automática no servidor</div>
-                <div class="sa">AES-256-GCM gera: iv:authTag:dadoCifrado (base64) → salvo no MySQL</div>
-              </div>
-              <div class="sync-item">
-                <div class="se">3. Dados permanecem no servidor interno</div>
-                <div class="sa">Nenhum envio automático para a máquina IA — conteúdo só sai quando solicitado</div>
-              </div>
-              <div class="sync-item">
-                <div class="se">4. IA busca ao abrir conversa</div>
-                <div class="sa">GET /api/assuntos/:id/mensagens-cifradas — transferência interna na rede local</div>
-              </div>
-              <div class="gnote">✅ <strong>Controle total:</strong> o conteúdo só sai do servidor quando o usuário
-                inicia uma conversa. Não há sincronização automática ou exposição desnecessária dos dados.</div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc5"></span></div>
-      </div>
-
-      <!-- ══ 6 — FLUXO IA ══ -->
-      <div class="slide" data-index="5">
-        <div class="slide-body">
-          <div class="s-title anim">Como Funciona — Fluxo da IA</div>
-          <p class="s-intro anim">O fluxo foi desenhado para garantir privacidade máxima: as mensagens cifradas viajam
-            da rede interna para a máquina local, onde são decifradas e processadas sem jamais sair da infraestrutura da
-            Hemobrás.</p>
-          <div class="flow-steps">
-            <div class="fstep anim">
-              <div class="fn">1</div>
-              <div class="fi">🖱️</div>
-              <div class="ft">Seleciona Assunto</div>
-              <div class="fb">O usuário navega pela hierarquia (Setor → Área → Tema) e escolhe o assunto desejado. Em
-                seguida, clica em "Conversar" para iniciar a sessão.</div>
-            </div>
-            <div class="fstep anim">
-              <div class="fn">2</div>
-              <div class="fi">📦</div>
-              <div class="ft">Transferência Segura</div>
-              <div class="fb">O backend busca todas as mensagens cifradas do assunto no MySQL e as envia via rede
-                interna para a máquina IA local. Nenhum dado trafega pela internet.</div>
-            </div>
-            <div class="fstep anim">
-              <div class="fn">3</div>
-              <div class="fi">🧠</div>
-              <div class="ft">Ingest Local</div>
-              <div class="fb">A máquina IA decifra as mensagens, gera os embeddings vetoriais e indexa no ChromaDB
-                local. Se o mesmo assunto já estiver carregado, esta etapa é pulada automaticamente.</div>
-            </div>
-            <div class="fstep anim">
-              <div class="fn">4</div>
-              <div class="fi">💬</div>
-              <div class="ft">Chat Inteligente</div>
-              <div class="fb">Busca híbrida BM25 + Vetorial captura tanto termos exatos quanto intenção semântica.
-                Reranker seleciona os melhores chunks. LLM Llama responde com temperature=0 para máxima precisão.</div>
-            </div>
-          </div>
-          <div class="flow-bar anim">🔒 Máquina IA sem internet &nbsp;·&nbsp; ChromaDB persiste localmente &nbsp;·&nbsp;
-            "🔄 Trocar de Assunto" limpa a sessão e recarrega novo contexto</div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc6"></span></div>
-      </div>
-
-      <!-- ══ 7 — SEGURANÇA ══ -->
-      <div class="slide s-dark" data-index="6">
-        <div class="slide-body">
-          <div class="s-title anim">Segurança de Dados</div>
-          <div class="sec-badge anim">🔐 Criptografia AES-256-GCM &nbsp;·&nbsp; Padrão Militar &nbsp;·&nbsp; Dados
-            ilegíveis no banco sem a chave secreta</div>
-          <p class="s-intro sec-intro anim">O conteúdo das mensagens é tratado como dado sensível desde o momento do
-            cadastro. Mesmo que alguém acesse diretamente o banco de dados MySQL, verá apenas sequências cifradas
-            incompreensíveis sem a chave correta.</p>
-          <div class="sec-flow anim">
-            <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:white">Mensagem<br>Original
-            </div>
-            <div class="sarr">→</div>
-            <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">ENCRYPT<br>AES-256-GCM
-            </div>
-            <div class="sarr">→</div>
-            <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:#AAAAFF">MySQL<br>(cifrado)
-            </div>
-            <div class="sarr">→</div>
-            <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">DECRYPT<br>AES-256-GCM
-            </div>
-            <div class="sarr">→</div>
-            <div class="sbox" style="background:#163E16;border:1.5px solid #44AA44;color:#AAFFAA">Texto Limpo<br>para a
-              IA</div>
-          </div>
-          <div class="sec-cards">
-            <div class="sec-card anim" style="border-color:#4444AA">
-              <div class="sct">🔑 Gestão da Chave</div>
-              <div class="scb">A chave de 256 bits vive exclusivamente em variável de ambiente (.env). Nunca é
-                armazenada no banco de dados. Apenas os servidores autorizados têm acesso a ela.</div>
-            </div>
-            <div class="sec-card anim" style="border-color:#A52020">
-              <div class="sct">🎲 IV Único por Mensagem</div>
-              <div class="scb">Cada mensagem recebe um vetor de inicialização (IV) gerado aleatoriamente na escrita.
-                Mesmo conteúdos idênticos produzem ciphertext completamente diferente — impossível de correlacionar.
-              </div>
-            </div>
-            <div class="sec-card anim" style="border-color:#44AA44">
-              <div class="sct">✅ Integridade Garantida</div>
-              <div class="scb">O modo GCM inclui uma tag de autenticação (AuthTag) que detecta qualquer adulteração nos
-                dados cifrados. Modificações maliciosas são automaticamente rejeitadas antes da decriptação.</div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc7"></span></div>
-      </div>
-
-      <!-- ══ 8 — ROTAS ══ -->
-      <div class="slide" data-index="7">
-        <div class="slide-body">
-          <div class="s-title anim">Rotas da API</div>
-          <p class="s-intro anim">O sistema é dividido em dois serviços independentes: o backend de gestão (Node.js na
-            rede interna) e o serviço de IA (Python na máquina local sem internet). A comunicação entre eles é pontual e
-            sempre com dados cifrados.</p>
-          <div class="api-grid">
-            <div class="anim">
-              <div class="ablock-hd">🟢 Backend de Gestão — Node.js (servidor interno)</div>
-              <div class="ablock-intro">Gerencia usuários, hierarquia e mensagens. Toda escrita no banco passa pela
-                camada de criptografia antes de ser persistida.</div>
-              <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/auth/login</span><span
-                  class="rdesc">→ JWT</span></div>
-              <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/tipos-usuario / setores /
-                  areas</span></div>
-              <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/usuarios / temas /
-                  assuntos</span></div>
-              <div class="route"><span class="mth m-get">GET</span><span
-                  class="rpath">/api/mensagens?assunto_id=X</span></div>
-              <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/mensagens</span><span
-                  class="rdesc">cifra + salva</span></div>
-              <div class="route"><span class="mth m-put">PUT</span><span class="rpath">/api/mensagens/:id</span><span
-                  class="rdesc">cifra + atualiza</span></div>
-              <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/api/mensagens/:id</span></div>
-              <div class="route"><span class="mth m-get">GET</span><span
-                  class="rpath">/api/assuntos/:id/mensagens-cifradas</span><span class="rdesc">→ para IA</span></div>
-            </div>
-            <div class="anim">
-              <div class="ablock-hd">🔵 Serviço IA — Python FastAPI (máquina local, sem internet)</div>
-              <div class="ablock-intro">Recebe dados cifrados da rede interna, processa localmente e responde ao
-                usuário. Nenhuma chamada externa é feita.</div>
-              <div class="route"><span class="mth m-post">POST</span><span class="rpath">/ingest</span><span
-                  class="rdesc">decifra + ChromaDB</span></div>
-              <div class="route" style="padding-left:50px;font-size:.66rem;color:var(--muted);font-family:Consolas">{
-                assunto_id, mensagens:[{id, conteudo_cifrado}] }</div>
-              <div class="route"><span class="mth m-post">POST</span><span class="rpath">/query</span><span
-                  class="rdesc">busca + LLM</span></div>
-              <div class="route" style="padding-left:50px;font-size:.66rem;color:var(--muted);font-family:Consolas">{
-                pergunta, historico[] } → resposta</div>
-              <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/limpar</span><span
-                  class="rdesc">limpa ChromaDB</span></div>
-              <div class="cfg-hd">⚙️ Configurações do Motor de IA (query.py)</div>
-              <div class="cfg-row"><span class="cfg-key">temperature</span><span class="cfg-val">= 0 — respostas
-                  determinísticas, sem "criatividade"</span></div>
-              <div class="cfg-row"><span class="cfg-key">TOP_K</span><span class="cfg-val">= 12 — chunks candidatos
-                  buscados</span></div>
-              <div class="cfg-row"><span class="cfg-key">TOP_K_FINAL</span><span class="cfg-val">= 6 — melhores chunks
-                  enviados ao LLM</span></div>
-              <div class="cfg-row"><span class="cfg-key">busca</span><span class="cfg-val">BM25 + Vetorial — híbrida
-                  para máxima precisão</span></div>
-              <div class="cfg-row"><span class="cfg-key">reranker</span><span class="cfg-val">FlashRank
-                  ms-marco-MiniLM-L-12-v2</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc8"></span></div>
-      </div>
-
-      <!-- ══ 9 — BENEFÍCIOS ══ -->
-      <div class="slide" data-index="8">
-        <div class="slide-body">
-          <div class="s-title anim">Benefícios</div>
-          <p class="s-intro anim">O Meu Senior Favorito não é apenas uma ferramenta de busca — é uma plataforma de
-            preservação e democratização do conhecimento institucional, com impacto direto na produtividade e na
-            segurança da informação.</p>
-          <div class="grid-6">
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">💾</div>
-              <div class="ct">Preserva o Conhecimento</div>
-              <div class="cb">O legado técnico dos profissionais mais experientes é registrado, estruturado e permanece
-                disponível para a organização mesmo após sua saída.</div>
-            </div>
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">⚡</div>
-              <div class="ct">Respostas Instantâneas</div>
-              <div class="cb">Qualquer colaborador encontra respostas em segundos, sem precisar interromper colegas ou
-                aguardar resposta de e-mail. Produtividade imediata.</div>
-            </div>
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">🛡️</div>
-              <div class="ct">Privacidade &amp; Segurança</div>
-              <div class="cb">IA 100% local, sem envio de dados para nuvem ou terceiros. Conteúdo sensível protegido por
-                criptografia militar AES-256-GCM.</div>
-            </div>
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">📈</div>
-              <div class="ct">Escalável por Setor</div>
-              <div class="cb">Cada área gerencia seu próprio acervo de forma independente. O crescimento de um setor não
-                afeta os demais. A solução cresce com a organização.</div>
-            </div>
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">🚀</div>
-              <div class="ct">Onboarding Acelerado</div>
-              <div class="cb">Novos colaboradores têm acesso imediato ao conhecimento acumulado da área, reduzindo
-                drasticamente o tempo até a plena produtividade.</div>
-            </div>
-            <div class="card a-red anim">
-              <div style="font-size:1.6rem;margin-bottom:5px">🤝</div>
-              <div class="ct">Valoriza os Experts</div>
-              <div class="cb">O profissional sênior é reconhecido como guardião do conhecimento institucional. Sua
-                contribuição vai além do tempo de trabalho — fica para sempre.</div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc9"></span></div>
-      </div>
-
-      <!-- ══ 10 — PRÓXIMOS PASSOS ══ -->
-      <div class="slide" data-index="9">
-        <div class="slide-body">
-          <div class="s-title anim">Próximos Passos</div>
-          <p class="s-intro anim">Com a arquitetura definida e o PoC aprovado, a implementação segue uma sequência
-            lógica: banco de dados → backend → serviço IA → interface. Cada etapa entrega valor independente e pode ser
-            validada antes da próxima.</p>
-          <div class="steps">
-            <div class="step anim">
-              <div class="snum">01</div>
-              <div><strong>Banco de Dados (MySQL + Sequelize)</strong><span class="sdesc">Criar e migrar as tabelas:
-                  TipoUsuario, Setor, Area, Usuario, Tema, Assunto e Mensagens. Configurar as chaves estrangeiras e o
-                  modelo de dados completo conforme arquitetura definida.</span></div>
-            </div>
-            <div class="step anim">
-              <div class="snum">02</div>
-              <div><strong>Backend de Gestão (Node.js + Express)</strong><span class="sdesc">Desenvolver o CRUD completo
-                  para toda a hierarquia, incluindo autenticação JWT, módulo de criptografia AES-256-GCM e a rota GET
-                  /assuntos/:id/mensagens-cifradas para servir a máquina IA.</span></div>
-            </div>
-            <div class="step anim">
-              <div class="snum">03</div>
-              <div><strong>Serviço IA (Python FastAPI — máquina local)</strong><span class="sdesc">Adaptar o rag-poc
-                  existente: implementar as rotas /ingest (decifra + ChromaDB), /query (busca híbrida + LLM) e /limpar
-                  (troca de assunto). Substituir filtro de source pelo assunto_id.</span></div>
-            </div>
-            <div class="step anim">
-              <div class="snum">04</div>
-              <div><strong>Interface (Next.js) + Piloto</strong><span class="sdesc">Construir a aba de cadastro
-                  protegida por senha, o seletor de assunto com hierarquia navegável, o chat com botão "🔄 Trocar de
-                  Assunto" e lançar o piloto em um setor para coleta de feedback.</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc10"></span></div>
-      </div>
-
-      <!-- ══ 11 — ENCERRAMENTO ══ -->
-      <div class="slide s-end" data-index="10">
-        <div class="ec1"></div>
-        <div class="ec2"></div>
-        <div class="econtent anim">
-          <span class="estar">★</span>
-          <h2>Meu Senior Favorito</h2>
-          <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
-        </div>
-        <a href="https://youtu.be/CFrANheqjTc" target="_blank" style="
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #F5A623;
-  color: #3A1A00;
-  font-weight: 700;
-  font-size: .85rem;
-  padding: .55rem 1.2rem;
-  border-radius: 5px;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
-  transition: background .2s;
-" onmouseover="this.style.background='#E09010'" onmouseout="this.style.background='#F5A623'">
-  ▶ Clique para ver o vídeo do sistema
-</a>
-        
-        <div class="footer"><span>Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC —
-            Hemobrás</span><span id="fc11"></span></div>
-      </div>
-
-    </div>
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="brand">
+    <div class="b-name">Hemobrás</div>
+    <div class="b-sub">GTIC — IA Desplugada</div>
   </div>
+  <div class="nav-list" id="nav-list"></div>
+  <div class="nav-footer">Marco Aurélio · 2026</div>
+</nav>
 
-  <script>
-    const SLIDES = [
-      { title: "Capa" }, { title: "O Problema" }, { title: "A Evolução" },
-      { title: "Hierarquia do Banco" }, { title: "Gestão do Conhecimento" }, { title: "Fluxo da IA" },
-      { title: "Segurança de Dados" }, { title: "Rotas da API" }, { title: "Benefícios" },
-      { title: "Próximos Passos" }, { title: "Encerramento" },
-    ];
-    const slides = document.querySelectorAll('.slide');
-    const total = slides.length;
-    let current = 0, busy = false;
+<!-- MAIN -->
+<div id="main">
+  <div id="progress"><div id="progress-bar"></div></div>
+  <div id="slides">
+    <button class="arrow-btn" id="btn-prev">&#8592;</button>
+    <button class="arrow-btn" id="btn-next">&#8594;</button>
 
-    const navList = document.getElementById('nav-list');
-    SLIDES.forEach((s, i) => {
-      const el = document.createElement('div');
-      el.className = 'nav-item' + (i === 0 ? ' active' : '');
-      el.innerHTML = `<div class="n-num">${i + 1}</div><div class="n-title">${s.title}</div>`;
-      el.onclick = () => goTo(i);
-      navList.appendChild(el);
-    });
+    <!-- ══ 1 — CAPA ══ -->
+    <div class="slide s1 active" data-index="0">
+      <div class="c1"></div><div class="c2"></div>
+      <div class="content">
+        <div class="brand anim">Hemobrás <span>Gerência de Tecnologia da Informação e Comunicação — GTIC</span></div>
+        <div class="div anim"></div>
+        <div class="badge anim">Versão 2.0</div>
+        <h1 class="anim">Meu Senior<br>Favorito</h1>
+        <p class="sub anim">A IA que preserva e gerencia o conhecimento institucional</p>
+        <p class="sub anim" style="font-size:clamp(.62rem,1vw,.72rem);color:rgba(255,180,180,.5);font-style:normal">Solução de Chat com IA Local &nbsp;·&nbsp; Desplugada da Internet &nbsp;·&nbsp; Dados Criptografados</p>
+        <a class="vid-btn anim" href="https://youtu.be/CFrANheqjTc" target="_blank">▶ Clique para ver o vídeo do sistema</a>
+      </div>
+      <div class="star">★</div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc1"></span></div>
+    </div>
 
-    for (let i = 1; i <= total; i++) {
-      const el = document.getElementById('fc' + i);
-      if (el) el.textContent = `${i} / ${total}`;
-    }
+    <!-- ══ 2 — PROBLEMA ══ -->
+    <div class="slide" data-index="1">
+      <div class="slide-body">
+        <div class="s-title anim">O Problema</div>
+        <p class="s-intro anim">A Hemobrás enfrenta um desafio silencioso: o conhecimento crítico está concentrado em pessoas, não em sistemas. Quando essas pessoas saem, o conhecimento vai com elas.</p>
+        <div class="grid-3">
+          <div class="card a-top anim">
+            <div style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:6px">👴</div>
+            <div class="num">01</div>
+            <div class="ct">Aposentadorias &amp; Rotatividade</div>
+            <div class="cb">Funcionários experientes acumulam anos de expertise em processos únicos. Quando se aposentam, levam consigo um acervo que nenhum manual formal conseguiu registrar. A curva de reposição é longa e custosa.</div>
+          </div>
+          <div class="card a-top anim">
+            <div style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:6px">⚠️</div>
+            <div class="num">02</div>
+            <div class="ct">Conhecimento Tácito Perdido</div>
+            <div class="cb">Procedimentos operacionais, atalhos de sistema e soluções para problemas recorrentes existem apenas na memória dos veteranos. Esse conhecimento raramente é documentado de forma estruturada.</div>
+          </div>
+          <div class="card a-top anim">
+            <div style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:6px">🔍</div>
+            <div class="num">03</div>
+            <div class="ct">Novos Colaboradores sem Referência</div>
+            <div class="cb">Profissionais recém-chegados perdem horas buscando respostas já resolvidas internamente. Sem base de consulta confiável, recorrem a colegas sobrecarregados, reduzindo a produtividade geral.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc2"></span></div>
+    </div>
 
-    function updateUI() {
-      document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
-      document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', i === current));
-      document.getElementById('btn-prev').style.opacity = current === 0 ? '0.2' : '1';
-      document.getElementById('btn-next').style.opacity = current === total - 1 ? '0.2' : '1';
-      const active = navList.querySelector('.nav-item.active');
-      if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
+    <!-- ══ 3 — EVOLUÇÃO ══ -->
+    <div class="slide" data-index="2">
+      <div class="slide-body">
+        <div class="s-title anim">A Evolução: Do PoC ao Sistema Completo</div>
+        <p class="s-intro anim">A versão 1.0 validou a viabilidade técnica com um PoC baseado em PDF. A versão 2.0 escala a solução para um sistema robusto, com gestão estruturada, segurança de dados e independência de internet.</p>
+        <div class="evo-grid">
+          <div class="evo-col before anim">
+            <div class="evo-hd b">ANTES — Versão 1.0 (PoC validado)</div>
+            <div class="evo-intro">Operação manual e sem estrutura de gestão.</div>
+            <ul class="evo-list">
+              <li>Senior escreve um PDF com seu conhecimento</li>
+              <li>PDF é carregado manualmente na IA</li>
+              <li>Equipe conversa com a IA via chat</li>
+              <li>Para atualizar: recriar e reupar o PDF inteiro</li>
+              <li>Sem controle de quem acessa o quê</li>
+              <li>Conteúdo em texto puro no servidor</li>
+              <li>Sem hierarquia organizacional de temas</li>
+            </ul>
+          </div>
+          <div class="evo-arrow anim">➜</div>
+          <div class="evo-col after anim">
+            <div class="evo-hd a">AGORA — Versão 2.0 (Sistema Completo)</div>
+            <div class="evo-intro">Plataforma com gestão de conteúdo, criptografia e IA offline.</div>
+            <ul class="evo-list">
+              <li class="hi">Usuários cadastram conteúdo diretamente no sistema</li>
+              <li class="hi">Hierarquia: Setor → Área → Tema → Assunto → Mensagens</li>
+              <li>IA carrega o conhecimento sob demanda, por assunto</li>
+              <li>Atualizar = editar uma mensagem no sistema</li>
+              <li class="hi">Controle de acesso por tipo de usuário</li>
+              <li class="hi">Todo conteúdo criptografado com AES-256-GCM</li>
+              <li>Máquina IA totalmente offline — zero dependência de internet</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc3"></span></div>
+    </div>
 
-    function goTo(idx) {
-      if (busy || idx === current || idx < 0 || idx >= total) return;
-      busy = true;
-      const prev = slides[current], next = slides[idx];
-      const dir = idx > current ? 1 : -1;
-      prev.classList.remove('active');
-      prev.classList.add('exit');
-      next.style.transform = `translateX(${dir > 0 ? 40 : -40}px)`;
-      next.style.opacity = '0';
-      next.classList.add('active');
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        next.style.transform = 'translateX(0)';
-        next.style.opacity = '1';
-        setTimeout(() => { prev.classList.remove('exit'); prev.style.cssText = ''; busy = false; }, 400);
-      }));
-      current = idx;
-      updateUI();
-    }
+    <!-- ══ 4 — HIERARQUIA ══ -->
+    <div class="slide" data-index="3">
+      <div class="slide-body">
+        <div class="s-title anim">Arquitetura de Conhecimento Estruturada</div>
+        <p class="s-intro anim">Cinco níveis hierárquicos permitem que cada área gerencie seu acervo de forma independente. A IA nunca "mistura" conteúdo de assuntos distintos — cada sessão é isolada.</p>
+        <div class="hier">
+          <div class="hbar anim" style="background:#7B1A1A"><span class="hl">🏢 Setor</span><span class="hd">Unidade organizacional de alto nível — ex: GTIC, GCQ, GPC, GPA...</span></div>
+          <div class="hbar anim" style="background:#A52020;margin-left:clamp(0px,2vw,22px)"><span class="hl">📂 Área</span><span class="hd">Subdivisão do setor — ex: Infraestrutura, Desenvolvimento, Controle de Qualidade...</span></div>
+          <div class="hbar anim" style="background:#C03030;margin-left:clamp(0px,4vw,44px)"><span class="hl">📁 Tema</span><span class="hd">Agrupamento de assuntos — ex: Servidores, Redes, Sistemas, Processos Internos...</span></div>
+          <div class="hbar anim" style="background:#885050;margin-left:clamp(0px,6vw,66px)"><span class="hl">📌 Assunto</span><span class="hd">Tópico específico consultável — ex: Configuração de Firewall, Controle de Ponto...</span></div>
+          <div class="hbar gold anim" style="background:#C87E1A;margin-left:clamp(0px,8vw,88px)"><span class="hl">💬 Mensagens</span><span class="hd" style="color:#7A4000">Conteúdo cadastrado pelos especialistas — base que alimenta a IA (armazenado criptografado)</span></div>
+          <div class="hnote anim">💡 <strong>Isolamento por sessão:</strong> ao selecionar um assunto, somente as mensagens daquele assunto são carregadas. O modelo não acessa nenhum outro conteúdo durante a conversa.</div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc4"></span></div>
+    </div>
 
-    document.getElementById('btn-next').onclick = () => goTo(current + 1);
-    document.getElementById('btn-prev').onclick = () => goTo(current - 1);
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
-      if (e.key === 'Home') goTo(0);
-      if (e.key === 'End') goTo(total - 1);
-    });
-    let tx = 0;
-    document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
-    document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1)); });
-    updateUI();
-  </script>
+    <!-- ══ 5 — GESTÃO ══ -->
+    <div class="slide" data-index="4">
+      <div class="slide-body">
+        <div class="s-title anim">Sistema de Gestão do Conhecimento</div>
+        <p class="s-intro anim">Uma aba protegida por senha dá acesso ao painel de administração, onde gestores mantêm o conteúdo atualizado. Toda alteração é transparente para o usuário final da IA.</p>
+        <div class="gestao-grid">
+          <div class="gcol anim">
+            <div class="gcol-hd">🔒 Painel de Cadastro — Senha: iadesplugada</div>
+            <div class="gcol-intro">Acesso restrito. Cada perfil tem permissões específicas dentro de sua área.</div>
+            <div class="gitem"><div class="gnum">1</div><div><strong>Perfis de acesso</strong><span>ADMIN gerencia tudo · GESTOR administra sua área · COLABORADOR consulta apenas</span></div></div>
+            <div class="gitem"><div class="gnum">2</div><div><strong>CRUD completo da hierarquia</strong><span>Criar, editar e remover Setores, Áreas, Temas e Assuntos</span></div></div>
+            <div class="gitem"><div class="gnum">3</div><div><strong>Gestão granular de mensagens</strong><span>Inserir novos conhecimentos, corrigir informações desatualizadas ou remover conteúdo obsoleto</span></div></div>
+            <div class="gitem"><div class="gnum">4</div><div><strong>Usuários vinculados à área</strong><span>Cada colaborador só pode gerir o conteúdo da sua própria área organizacional</span></div></div>
+            <div class="gitem"><div class="gnum">5</div><div><strong>Criptografia automática e transparente</strong><span>O usuário escreve em texto claro — o sistema cifra antes de salvar. Nenhum dado sensível fica exposto.</span></div></div>
+          </div>
+          <div class="gcol anim">
+            <div class="gcol-hd">⚡ Ciclo de Vida de uma Mensagem</div>
+            <div class="gcol-intro">Do cadastro até chegar na IA, cada mensagem percorre um pipeline seguro e controlado.</div>
+            <div class="sync-item"><div class="se">1. Especialista digita o conteúdo</div><div class="sa">Texto claro submetido via interface de cadastro</div></div>
+            <div class="sync-item"><div class="se">2. Criptografia automática no servidor</div><div class="sa">AES-256-GCM gera: iv:authTag:dadoCifrado (base64) → salvo no MySQL</div></div>
+            <div class="sync-item"><div class="se">3. Dados permanecem no servidor interno</div><div class="sa">Nenhum envio automático para a máquina IA — conteúdo só sai quando solicitado</div></div>
+            <div class="sync-item"><div class="se">4. IA busca ao abrir conversa</div><div class="sa">GET /api/assuntos/:id/mensagens-cifradas — transferência interna na rede local</div></div>
+            <div class="gnote">✅ <strong>Controle total:</strong> o conteúdo só sai do servidor quando o usuário inicia uma conversa. Não há sincronização automática ou exposição desnecessária dos dados.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc5"></span></div>
+    </div>
+
+    <!-- ══ 6 — FLUXO IA ══ -->
+    <div class="slide" data-index="5">
+      <div class="slide-body">
+        <div class="s-title anim">Como Funciona — Fluxo da IA</div>
+        <p class="s-intro anim">O fluxo garante privacidade máxima: mensagens cifradas viajam da rede interna para a máquina local, onde são decifradas e processadas sem jamais sair da infraestrutura da Hemobrás.</p>
+        <div class="flow-steps">
+          <div class="fstep anim"><div class="fn">1</div><div class="fi">🖱️</div><div class="ft">Seleciona Assunto</div><div class="fb">O usuário navega pela hierarquia e escolhe o assunto desejado, clicando em "Conversar" para iniciar a sessão.</div></div>
+          <div class="fstep anim"><div class="fn">2</div><div class="fi">📦</div><div class="ft">Transferência Segura</div><div class="fb">Backend busca mensagens cifradas do assunto no MySQL e as envia via rede interna para a máquina IA local. Nenhum dado trafega pela internet.</div></div>
+          <div class="fstep anim"><div class="fn">3</div><div class="fi">🧠</div><div class="ft">Ingest Local</div><div class="fb">A máquina IA decifra, gera embeddings e indexa no ChromaDB local. Se o mesmo assunto já estiver carregado, esta etapa é pulada automaticamente.</div></div>
+          <div class="fstep anim"><div class="fn">4</div><div class="fi">💬</div><div class="ft">Chat Inteligente</div><div class="fb">Busca híbrida BM25 + Vetorial → Reranker → LLM Llama (temperature=0) → Resposta precisa e baseada apenas no assunto selecionado.</div></div>
+        </div>
+        <div class="flow-bar anim">🔒 Máquina IA sem internet &nbsp;·&nbsp; ChromaDB persiste localmente &nbsp;·&nbsp; "🔄 Trocar de Assunto" limpa a sessão e recarrega novo contexto</div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc6"></span></div>
+    </div>
+
+    <!-- ══ 7 — SEGURANÇA ══ -->
+    <div class="slide s-dark" data-index="6">
+      <div class="slide-body">
+        <div class="s-title anim">Segurança de Dados</div>
+        <div class="sec-badge anim">🔐 Criptografia AES-256-GCM &nbsp;·&nbsp; Padrão Militar &nbsp;·&nbsp; Dados ilegíveis no banco sem a chave secreta</div>
+        <p class="s-intro sec-intro anim">O conteúdo das mensagens é sensível desde o cadastro. Mesmo com acesso direto ao banco MySQL, apenas sequências cifradas incompreensíveis serão visíveis sem a chave correta.</p>
+        <div class="sec-flow anim">
+          <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:white">Mensagem<br>Original</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">ENCRYPT<br>AES-256-GCM</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#16213E;border:1.5px solid #4444AA;color:#AAAAFF">MySQL<br>(cifrado)</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#7B1A1A;border:1.5px solid #A52020;color:white">DECRYPT<br>AES-256-GCM</div>
+          <div class="sarr">→</div>
+          <div class="sbox" style="background:#163E16;border:1.5px solid #44AA44;color:#AAFFAA">Texto Limpo<br>para a IA</div>
+        </div>
+        <div class="sec-cards">
+          <div class="sec-card anim" style="border-color:#4444AA"><div class="sct">🔑 Gestão da Chave</div><div class="scb">A chave de 256 bits vive exclusivamente em variável de ambiente (.env). Nunca é armazenada no banco. Apenas os servidores autorizados têm acesso a ela.</div></div>
+          <div class="sec-card anim" style="border-color:#A52020"><div class="sct">🎲 IV Único por Mensagem</div><div class="scb">Cada mensagem recebe um vetor de inicialização (IV) aleatório na escrita. Mesmo conteúdos idênticos produzem ciphertext diferente — impossível de correlacionar.</div></div>
+          <div class="sec-card anim" style="border-color:#44AA44"><div class="sct">✅ Integridade Garantida</div><div class="scb">O modo GCM inclui AuthTag que detecta qualquer adulteração. Modificações maliciosas são automaticamente rejeitadas antes da decriptação.</div></div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc7"></span></div>
+    </div>
+
+    <!-- ══ 8 — ROTAS ══ -->
+    <div class="slide" data-index="7">
+      <div class="slide-body">
+        <div class="s-title anim">Rotas da API</div>
+        <p class="s-intro anim">Dois serviços independentes: backend de gestão (Node.js, rede interna) e serviço de IA (Python, máquina local sem internet). Comunicação pontual, sempre com dados cifrados.</p>
+        <div class="api-grid">
+          <div class="api-col anim">
+            <div class="ablock-hd">🟢 Backend de Gestão — Node.js (servidor interno)</div>
+            <div class="ablock-intro">Gerencia usuários, hierarquia e mensagens. Toda escrita passa pela camada de criptografia.</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/auth/login</span><span class="rdesc">→ JWT</span></div>
+            <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/tipos-usuario / setores / areas</span></div>
+            <div class="route"><span class="mth m-crud">CRUD</span><span class="rpath">/api/usuarios / temas / assuntos</span></div>
+            <div class="route"><span class="mth m-get">GET</span><span class="rpath">/api/mensagens?assunto_id=X</span></div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/api/mensagens</span><span class="rdesc">cifra + salva</span></div>
+            <div class="route"><span class="mth m-put">PUT</span><span class="rpath">/api/mensagens/:id</span><span class="rdesc">cifra + atualiza</span></div>
+            <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/api/mensagens/:id</span></div>
+            <div class="route"><span class="mth m-get">GET</span><span class="rpath">/api/assuntos/:id/mensagens-cifradas</span><span class="rdesc">→ IA</span></div>
+          </div>
+          <div class="api-col anim">
+            <div class="ablock-hd">🔵 Serviço IA — Python FastAPI (máquina local, sem internet)</div>
+            <div class="ablock-intro">Recebe dados cifrados, processa localmente. Nenhuma chamada externa.</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/ingest</span><span class="rdesc">decifra + ChromaDB</span></div>
+            <div class="route" style="padding-left:48px;font-size:.63rem;color:var(--muted);font-family:Consolas">{ assunto_id, mensagens:[{id,conteudo_cifrado}] }</div>
+            <div class="route"><span class="mth m-post">POST</span><span class="rpath">/query</span><span class="rdesc">busca + LLM</span></div>
+            <div class="route" style="padding-left:48px;font-size:.63rem;color:var(--muted);font-family:Consolas">{ pergunta, historico[] } → resposta</div>
+            <div class="route"><span class="mth m-del">DEL</span><span class="rpath">/limpar</span><span class="rdesc">limpa ChromaDB</span></div>
+            <div class="cfg-hd">⚙️ Config IA (query.py)</div>
+            <div class="cfg-row"><span class="cfg-key">temperature</span><span class="cfg-val">= 0 — determinístico</span></div>
+            <div class="cfg-row"><span class="cfg-key">TOP_K</span><span class="cfg-val">= 12 — chunks candidatos</span></div>
+            <div class="cfg-row"><span class="cfg-key">TOP_K_FINAL</span><span class="cfg-val">= 6 — chunks ao LLM</span></div>
+            <div class="cfg-row"><span class="cfg-key">busca</span><span class="cfg-val">BM25 + Vetorial (híbrida)</span></div>
+            <div class="cfg-row"><span class="cfg-key">reranker</span><span class="cfg-val">FlashRank ms-marco-MiniLM</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc8"></span></div>
+    </div>
+
+    <!-- ══ 9 — BENEFÍCIOS ══ -->
+    <div class="slide" data-index="8">
+      <div class="slide-body">
+        <div class="s-title anim">Benefícios</div>
+        <p class="s-intro anim">O Meu Senior Favorito é uma plataforma de preservação e democratização do conhecimento institucional, com impacto direto na produtividade e na segurança da informação.</p>
+        <div class="grid-6">
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">💾</div><div class="ct">Preserva o Conhecimento</div><div class="cb">O legado técnico dos profissionais experientes é registrado e permanece disponível mesmo após sua saída.</div></div>
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">⚡</div><div class="ct">Respostas Instantâneas</div><div class="cb">Qualquer colaborador encontra respostas em segundos, sem interromper colegas ou aguardar e-mail.</div></div>
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">🛡️</div><div class="ct">Privacidade &amp; Segurança</div><div class="cb">IA 100% local, sem envio para nuvem. Conteúdo protegido por criptografia AES-256-GCM.</div></div>
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">📈</div><div class="ct">Escalável por Setor</div><div class="cb">Cada área gerencia seu acervo independentemente. A solução cresce com a organização.</div></div>
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">🚀</div><div class="ct">Onboarding Acelerado</div><div class="cb">Novos colaboradores têm acesso imediato ao conhecimento da área, reduzindo o tempo até a plena produtividade.</div></div>
+          <div class="card a-red anim"><div style="font-size:clamp(1.2rem,2.5vw,1.6rem);margin-bottom:4px">🤝</div><div class="ct">Valoriza os Experts</div><div class="cb">O profissional sênior é reconhecido como guardião do conhecimento. Sua contribuição fica para sempre.</div></div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc9"></span></div>
+    </div>
+
+    <!-- ══ 10 — PRÓXIMOS PASSOS ══ -->
+    <div class="slide" data-index="9">
+      <div class="slide-body">
+        <div class="s-title anim">Próximos Passos</div>
+        <p class="s-intro anim">Com arquitetura definida e PoC aprovado, a implementação segue uma sequência lógica. Cada etapa entrega valor independente e pode ser validada antes da próxima.</p>
+        <div class="steps">
+          <div class="step anim"><div class="snum">01</div><div><strong>Banco de Dados (MySQL + Sequelize)</strong><span class="sdesc">Criar e migrar as tabelas: TipoUsuario, Setor, Area, Usuario, Tema, Assunto e Mensagens. Configurar chaves estrangeiras e o modelo de dados conforme arquitetura definida.</span></div></div>
+          <div class="step anim"><div class="snum">02</div><div><strong>Backend de Gestão (Node.js + Express)</strong><span class="sdesc">Desenvolver CRUD completo com autenticação JWT, módulo de criptografia AES-256-GCM e rota GET /assuntos/:id/mensagens-cifradas para servir a máquina IA.</span></div></div>
+          <div class="step anim"><div class="snum">03</div><div><strong>Serviço IA (Python FastAPI — máquina local)</strong><span class="sdesc">Adaptar o rag-poc: implementar /ingest (decifra + ChromaDB), /query (busca híbrida + LLM) e /limpar (troca de assunto). Substituir filtro de source pelo assunto_id.</span></div></div>
+          <div class="step anim"><div class="snum">04</div><div><strong>Interface (Next.js) + Piloto</strong><span class="sdesc">Aba de cadastro protegida, seletor de assunto com hierarquia navegável, chat com botão "🔄 Trocar de Assunto". Lançar piloto em um setor para coleta de feedback.</span></div></div>
+        </div>
+      </div>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc10"></span></div>
+    </div>
+
+    <!-- ══ 11 — ENCERRAMENTO ══ -->
+    <div class="slide s-end" data-index="10">
+      <div class="ec1"></div><div class="ec2"></div>
+      <div class="econtent anim">
+        <span class="estar">★</span>
+        <h2>Meu Senior Favorito</h2>
+        <p>O conhecimento certo, para a pessoa certa, na hora certa.</p>
+      </div>
+      <a class="vid-btn anim" href="https://youtu.be/CFrANheqjTc" target="_blank">▶ Clique para ver o vídeo do sistema</a>
+      <div class="footer"><span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span><span id="fc11"></span></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SLIDES=[{title:"Capa"},{title:"O Problema"},{title:"A Evolução"},{title:"Hierarquia do Banco"},{title:"Gestão do Conhecimento"},{title:"Fluxo da IA"},{title:"Segurança de Dados"},{title:"Rotas da API"},{title:"Benefícios"},{title:"Próximos Passos"},{title:"Encerramento"}];
+const slides=document.querySelectorAll('.slide'), total=slides.length;
+let current=0, busy=false;
+
+// sidebar nav
+const navList=document.getElementById('nav-list');
+SLIDES.forEach((s,i)=>{
+  const el=document.createElement('div');
+  el.className='nav-item'+(i===0?' active':'');
+  el.innerHTML=`<div class="n-num">${i+1}</div><div class="n-title">${s.title}</div>`;
+  el.onclick=()=>{goTo(i);if(window.innerWidth<=640)toggleSidebar(false);};
+  navList.appendChild(el);
+});
+
+for(let i=1;i<=total;i++){const el=document.getElementById('fc'+i);if(el)el.textContent=`${i} / ${total}`;}
+
+function updateUI(){
+  document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';
+  document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',i===current));
+  document.getElementById('btn-prev').style.opacity=current===0?'0.2':'1';
+  document.getElementById('btn-next').style.opacity=current===total-1?'0.2':'1';
+  const active=navList.querySelector('.nav-item.active');
+  if(active)active.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function goTo(idx){
+  if(busy||idx===current||idx<0||idx>=total)return;
+  busy=true;
+  const prev=slides[current],next=slides[idx],dir=idx>current?1:-1;
+  prev.classList.remove('active'); prev.classList.add('exit');
+  next.style.transform=`translateX(${dir>0?40:-40}px)`; next.style.opacity='0';
+  next.classList.add('active');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    next.style.transform='translateX(0)'; next.style.opacity='1';
+    setTimeout(()=>{prev.classList.remove('exit');prev.style.cssText='';busy=false;},400);
+  }));
+  current=idx; updateUI();
+}
+
+document.getElementById('btn-next').onclick=()=>goTo(current+1);
+document.getElementById('btn-prev').onclick=()=>goTo(current-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goTo(current+1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();goTo(current-1);}
+  if(e.key==='Home')goTo(0); if(e.key==='End')goTo(total-1);
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)goTo(current+(dx<0?1:-1));});
+
+function toggleSidebar(force){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sb-overlay');
+  const open=force!==undefined?force:!sb.classList.contains('open');
+  sb.classList.toggle('open',open);
+  ov.classList.toggle('open',open);
+}
+updateUI();
+</script>
 </body>
-
 </html>
