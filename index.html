@@ -326,23 +326,43 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 .s-end .vid-btn:hover { background:#E09010; }
 
 /* ═══ SLIDE 12 — VÍDEO ═══ */
-.s-video { background: #0f0f0f !important; }
-.s-video .s-title { color: white; border-color: #333; }
-.s-video .s-intro { color: #aaa; }
-.video-wrap {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 0 12px;
+/* ═══ SLIDE 12 — VÍDEO ═══ */
+
+.s-video{
+  background:#0f0f0f !important;
 }
-.video-wrap iframe {
-  width: 100%;
-  height: 100%;
-  max-height: calc(100% - 4px);
-  border-radius: 10px;
-  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+
+.s-video .slide-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.s-video .s-title{
+  color:#fff;
+  border-color:#333;
+}
+
+.s-video .s-intro{
+  color:#aaa;
+}
+
+.video-wrap{
+  flex:1;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px 0 20px;
+}
+
+.video-wrap iframe{
+  width:min(1400px,95%);
+  height:75vh;
+  border:0;
+  border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
 }
 
 /* ═══ ANIM ═══ */
@@ -680,7 +700,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
     </div>
 
     <!-- ══ 11 — ENCERRAMENTO ══ -->
-    <div class="slide s-end" data-index="10">
+    <div class="slide s-video" data-index="10">
       
 
            <div class="slide-body">
@@ -703,7 +723,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
     </div>
 
     <!-- ══ 12 — VÍDEO ══ -->
-    <div class="slide s-video" data-index="11">
+    <div class="slide s-end" data-index="11">
       <div class="ec1"></div><div class="ec2"></div>
       <div class="econtent anim">
         <span class="estar">★</span>
@@ -718,7 +738,20 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 </div>
 
 <script>
-const SLIDES=[{title:"Capa"},{title:"O Problema"},{title:"A Evolução"},{title:"Hierarquia do Banco"},{title:"Gestão do Conhecimento"},{title:"Fluxo da IA"},{title:"Segurança de Dados"},{title:"Rotas da API"},{title:"Benefícios"},{title:"Próximos Passos"},{title:"Encerramento"},{title:"▶ Vídeo Demo"}];
+  const SLIDES=[
+ {title:"Capa"},
+ {title:"O Problema"},
+ {title:"A Evolução"},
+ {title:"Hierarquia do Banco"},
+ {title:"Gestão do Conhecimento"},
+ {title:"Fluxo da IA"},
+ {title:"Segurança de Dados"},
+ {title:"Rotas da API"},
+ {title:"Benefícios"},
+ {title:"Próximos Passos"},
+ {title:"▶ Vídeo Demo"},
+ {title:"Encerramento"}
+];
 const slides=document.querySelectorAll('.slide'), total=slides.length;
 let current=0, busy=false;
 
