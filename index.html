@@ -51,6 +51,19 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
   font-size:.62rem; font-weight:700;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
+
+/* ═══ SLIDE 0 — IMAGEM ═══ */
+.s-img {
+  background: #000 !important;
+}
+.s-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
 .nav-item.active .n-num { background:var(--red); color:white; }
 .nav-item .n-title { font-size:.7rem; color:var(--muted); line-height:1.3; }
 .nav-item.active .n-title { color:var(--dark); font-weight:700; }
@@ -456,6 +469,14 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
         <div class="sh-row" style="opacity:.5"><span></span><span></span></div>
       </div>
     </div>
+    <!-- ══ 0 — IMAGEM ══ -->
+<div class="slide s-img active" data-index="0">
+  <img src="img.jpeg" alt="Capa">
+  <div class="footer">
+    <span class="f-author">Marco Aurélio &nbsp;|&nbsp; Analista de Sistemas &nbsp;|&nbsp; GTIC — Hemobrás</span>
+    <span id="fc0"></span>
+  </div>
+</div>
 
     <!-- ══ 1 — CAPA ══ -->
     <div class="slide s1 active" data-index="0">
@@ -739,6 +760,7 @@ body { font-family:'Segoe UI',Arial,sans-serif; background:#ECECEC; display:flex
 
 <script>
   const SLIDES=[
+  {title:"Imagem de Capa"},
  {title:"Capa"},
  {title:"O Problema"},
  {title:"A Evolução"},
